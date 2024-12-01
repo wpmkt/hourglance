@@ -54,8 +54,11 @@ const MonthCard = ({ month, year, shifts, nonAccountingDays }: MonthCardProps) =
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
   ];
 
+  // Formata a data corretamente para a URL
+  const formattedDate = format(currentDate, 'yyyy-MM-dd');
+
   return (
-    <Link to={`/month/${month + 1}`} className="group block">
+    <Link to={`/month/${formattedDate}`} className="group block">
       <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100 group-hover:border-primary">
         <div className="flex justify-between items-center">
           <h3 className="text-base font-medium text-neutral-900">{months[month]}</h3>
