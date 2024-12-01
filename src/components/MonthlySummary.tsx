@@ -20,57 +20,57 @@ const MonthlySummary = ({
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Card className="p-6">
+      <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-white/80 backdrop-blur-sm">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-neutral-500">Dias Previstos</h4>
-            <Calendar className="h-4 w-4 text-neutral-500" />
+            <Calendar className="h-4 w-4 text-blue-500" />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <div>
-              <p className="text-2xl font-semibold">{daysInMonth}</p>
+            <div className="text-center p-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <p className="text-2xl font-semibold text-blue-700">{daysInMonth}</p>
               <p className="text-sm text-neutral-500">Total</p>
             </div>
-            <div>
-              <p className="text-2xl font-semibold">{nonAccountingDays}</p>
+            <div className="text-center p-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <p className="text-2xl font-semibold text-blue-700">{nonAccountingDays}</p>
               <p className="text-sm text-neutral-500">Não Contábeis</p>
             </div>
-            <div>
-              <p className="text-2xl font-semibold">{workingDays}</p>
+            <div className="text-center p-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <p className="text-2xl font-semibold text-blue-700">{workingDays}</p>
               <p className="text-sm text-neutral-500">A Trabalhar</p>
             </div>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6">
+      <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-white/80 backdrop-blur-sm">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-neutral-500">Horas Previstas</h4>
-            <Clock className="h-4 w-4 text-neutral-500" />
+            <Clock className="h-4 w-4 text-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-2xl font-semibold">{expectedHours.toFixed(1)}</p>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <p className="text-2xl font-semibold text-blue-700">{expectedHours.toFixed(1)}</p>
               <p className="text-sm text-neutral-500">Previstas</p>
             </div>
-            <div>
-              <p className="text-2xl font-semibold">{workedHours.toFixed(1)}</p>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <p className="text-2xl font-semibold text-blue-700">{workedHours.toFixed(1)}</p>
               <p className="text-sm text-neutral-500">Trabalhadas</p>
             </div>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6">
+      <Card className="p-6 hover:shadow-lg transition-shadow duration-200 bg-white/80 backdrop-blur-sm">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-neutral-500">Saldo</h4>
-            <Clock className="h-4 w-4 text-neutral-500" />
+            <Clock className="h-4 w-4 text-blue-500" />
           </div>
-          <div>
+          <div className="text-center p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
             <p className={`text-3xl font-semibold ${
-              hoursBalance >= 0 ? 'text-green-500' : 'text-red-500'
+              hoursBalance >= 0 ? 'text-green-600' : 'text-red-600'
             }`}>
               {hoursBalance.toFixed(1)}h
             </p>

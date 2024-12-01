@@ -17,11 +17,11 @@ const Login = () => {
   }, [session, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 p-4">
-      <Card className="w-full max-w-md p-6 space-y-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+      <Card className="w-full max-w-md p-8 space-y-8 bg-white/80 backdrop-blur-sm shadow-xl">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold text-neutral-900">
-            Controle de Horas
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
+            TimeBank
           </h1>
           <p className="text-neutral-500">
             Faça login para continuar
@@ -35,10 +35,14 @@ const Login = () => {
             variables: {
               default: {
                 colors: {
-                  brand: '#0f172a',
-                  brandAccent: '#334155',
+                  brand: '#3b82f6',
+                  brandAccent: '#2563eb',
                 }
               }
+            },
+            className: {
+              button: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
+              input: 'rounded-lg border-neutral-200 focus:border-blue-500 focus:ring-blue-500',
             }
           }}
           localization={{

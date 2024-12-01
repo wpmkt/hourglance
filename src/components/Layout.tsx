@@ -44,10 +44,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Link
         to="/"
-        className={`flex items-center px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive("/")
-            ? "bg-primary text-white"
-            : "text-neutral-600 hover:bg-neutral-100"
+            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+            : "text-neutral-600 hover:bg-blue-50"
         }`}
       >
         <Calendar className="w-5 h-5 mr-3" />
@@ -55,10 +55,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </Link>
       <Link
         to="/reports"
-        className={`flex items-center px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive("/reports")
-            ? "bg-primary text-white"
-            : "text-neutral-600 hover:bg-neutral-100"
+            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+            : "text-neutral-600 hover:bg-blue-50"
         }`}
       >
         <BarChart2 className="w-5 h-5 mr-3" />
@@ -68,13 +68,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Mobile Header */}
-      <header className="lg:hidden bg-white border-b border-neutral-200 sticky top-0 z-50">
+      <header className="lg:hidden bg-white/80 backdrop-blur-lg border-b border-neutral-200 sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 h-16">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="p-2 hover:bg-neutral-100 rounded-lg">
+              <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors">
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
@@ -84,10 +84,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </nav>
             </SheetContent>
           </Sheet>
-          <span className="text-xl font-bold text-primary">TimeBank</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
+            TimeBank
+          </span>
           <button
             onClick={handleLogout}
-            className="p-2 hover:bg-neutral-100 rounded-lg"
+            className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
           >
             <LogOut className="w-6 h-6" />
           </button>
@@ -96,10 +98,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex">
-        <aside className="w-64 bg-white border-r border-neutral-200 fixed h-screen">
+        <aside className="w-64 bg-white/80 backdrop-blur-lg border-r border-neutral-200 fixed h-screen">
           <div className="flex flex-col h-full">
             <div className="p-6">
-              <span className="text-2xl font-bold text-primary">TimeBank</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
+                TimeBank
+              </span>
             </div>
             <nav className="flex-1 px-4 space-y-2">
               <NavLinks />
@@ -107,7 +111,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="p-4 border-t border-neutral-200">
               <button
                 onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="flex items-center w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
               >
                 <LogOut className="w-5 h-5 mr-3" />
                 Sair
@@ -117,14 +121,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </aside>
         <div className="flex-1 ml-64">
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
+            <div className="animate-fade-in">
+              {children}
+            </div>
           </main>
         </div>
       </div>
 
       {/* Mobile Content */}
       <div className="lg:hidden">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">{children}</main>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          <div className="animate-fade-in">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
