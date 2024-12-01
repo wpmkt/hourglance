@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { calculateMonthStats } from "@/utils/monthCalculations";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { startOfMonth, endOfMonth, format } from "date-fns";
 import type { Database } from "@/integrations/supabase/types";
+import { calculateTotalHours } from "@/utils/timeCalculations";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -19,13 +20,13 @@ const MonthCard = ({ month, year, shifts, nonAccountingDays }: MonthCardProps) =
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 
-  // Filter shifts for current month
+  // Filtra os turnos do mês atual
   const monthShifts = shifts.filter(shift => {
     const shiftDate = new Date(shift.date);
     return shiftDate >= monthStart && shiftDate <= monthEnd;
   });
 
-  // Calculate non-accounting days for current month
+  // Calcula dias não contábeis para o mês atual
   const monthNonAccountingDays = nonAccountingDays.reduce((count, day) => {
     const startDate = new Date(day.start_date);
     const endDate = new Date(day.end_date);
@@ -44,15 +45,14 @@ const MonthCard = ({ month, year, shifts, nonAccountingDays }: MonthCardProps) =
   const formatHours = (hours: number) => {
     const wholeHours = Math.floor(hours);
     const minutes = Math.round((hours - wholeHours) * 60);
-    return `${wholeHours}h${minutes > 0 ? minutes.toString().padStart(2, '0') + 'min' : ''}`;
+    if (minutes === 0) return `${wholeHours}h`;
+    return `${wholeHours}h${minutes.toString().padStart(2, '0')}min`;
   };
 
   const months = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
   ];
-
-  const balance = stats.workedHours - stats.expectedHours;
 
   return (
     <Link to={`/month/${month + 1}`} className="group block">
@@ -72,8 +72,8 @@ const MonthCard = ({ month, year, shifts, nonAccountingDays }: MonthCardProps) =
           </div>
           <div className="flex justify-between items-center">
             <p className="text-sm text-neutral-500">Saldo</p>
-            <span className={`text-sm font-medium ${balance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-              {balance >= 0 ? '+' : ''}{formatHours(balance)}
+            <span className={`text-sm font-medium ${stats.balance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+              {stats.balance >= 0 ? '+' : ''}{formatHours(Math.abs(stats.balance))}
             </span>
           </div>
         </div>
