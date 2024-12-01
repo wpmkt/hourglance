@@ -9,10 +9,12 @@ import MonthNavigation from "@/components/MonthNavigation";
 import MonthlySummary from "@/components/MonthlySummary";
 import ShiftsList from "@/components/ShiftsList";
 import NonAccountingDaysList from "@/components/NonAccountingDaysList";
+import { useToast } from "@/components/ui/use-toast";
 
 const Month = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   // Garantir que temos uma data válida
   const currentDate = (() => {
@@ -27,7 +29,15 @@ const Month = () => {
 
   const fetchMonthData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Usuário não autenticado");
+    if (!user) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para acessar esta página.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      throw new Error("Usuário não autenticado");
+    }
 
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
@@ -54,10 +64,18 @@ const Month = () => {
     return { shifts, nonAccountingDays };
   };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["month-data", id],
     queryFn: fetchMonthData,
   });
+
+  if (error) {
+    toast({
+      title: "Erro ao carregar dados",
+      description: "Ocorreu um erro ao carregar os dados do mês.",
+      variant: "destructive",
+    });
+  }
 
   const calculateWorkingDays = () => {
     if (!data) return 0;
@@ -97,7 +115,13 @@ const Month = () => {
   };
 
   if (isLoading) {
-    return <div>Carregando...</div>;
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-lg">Carregando...</div>
+        </div>
+      </Layout>
+    );
   }
 
   return (
