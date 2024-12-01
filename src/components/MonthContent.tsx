@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ShiftDialog } from "@/components/ShiftDialog";
 import { NonAccountingDayDialog } from "@/components/NonAccountingDayDialog";
-import MonthNavigation from "@/components/MonthNavigation";
 import MonthlySummary from "@/components/MonthlySummary";
 import ShiftsList from "@/components/ShiftsList";
 import NonAccountingDaysList from "@/components/NonAccountingDaysList";
@@ -155,7 +154,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-24">
       <div className="bg-white">
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-4">
@@ -190,7 +189,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           workedHours={calculateWorkedHours()}
         />
 
-        <div className="mb-24">
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Registros Recentes</h2>
           </div>
@@ -200,7 +199,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           </div>
         </div>
 
-        <div className="fixed bottom-6 left-0 right-0 px-4 max-w-lg mx-auto flex gap-2">
+        <div className="fixed bottom-6 left-0 right-0 px-4 max-w-lg mx-auto flex gap-2 z-50">
           <ShiftDialog currentDate={currentDate} />
           <NonAccountingDayDialog currentDate={currentDate} />
         </div>

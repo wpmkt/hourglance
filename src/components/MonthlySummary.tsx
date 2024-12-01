@@ -30,7 +30,7 @@ const MonthlySummary = ({
             {new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="flex justify-between items-center">
           <div>
             <p className="text-blue-200 text-sm mb-1">Horas Previstas</p>
             <p className="text-xl font-semibold">{expectedHours.toFixed(1)}h</p>
