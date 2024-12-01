@@ -35,17 +35,17 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
+    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-200 hover:bg-neutral-50">
       <div className="flex flex-col space-y-3">
         <div className="flex justify-between items-center">
-          <div className="bg-neutral-50 text-neutral-700 px-3 py-1.5 rounded-lg font-medium">
+          <div className="bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-lg font-medium">
             {format(parseISO(shift.date), "dd/MM/yyyy")}
           </div>
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 h-8 w-8"
+              className="text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 h-8 w-8"
               onClick={() => onEdit(shift)}
             >
               <Pencil className="h-4 w-4" />
@@ -88,7 +88,7 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg text-sm">
+          <div className="flex items-center gap-2 bg-neutral-100 px-3 py-1.5 rounded-lg text-sm">
             <Clock className="h-4 w-4 text-neutral-500 flex-shrink-0" />
             <span className="text-neutral-700 whitespace-nowrap">
               {shift.start_time.slice(0, 5)} - {shift.end_time.slice(0, 5)}
@@ -101,7 +101,7 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
             </div>
             
             {nightMinutes > 0 && (
-              <div className="flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg">
+              <div className="flex items-center gap-2 bg-neutral-100 px-3 py-1.5 rounded-lg">
                 <Moon className="h-4 w-4 text-neutral-500 flex-shrink-0" />
                 <span className="text-neutral-700 font-medium text-sm whitespace-nowrap">
                   {nightMinutes}min
@@ -112,7 +112,7 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
         </div>
 
         {shift.comment && (
-          <div className="text-sm text-neutral-500 bg-neutral-50 p-2 rounded-lg break-words">
+          <div className="text-sm text-neutral-600 bg-neutral-100 p-2 rounded-lg break-words">
             {shift.comment}
           </div>
         )}

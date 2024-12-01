@@ -60,32 +60,32 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
   };
 
   return (
-    <Card className="h-[400px] flex flex-col bg-white">
-      <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
+    <Card className="h-[400px] flex flex-col bg-white overflow-hidden">
+      <div className="p-4 border-b border-neutral-200 flex items-center gap-2 bg-white">
         <Calendar className="h-5 w-5 text-neutral-500" />
         <h3 className="text-lg font-medium text-neutral-800">Dias Não Contábeis</h3>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="p-4 space-y-3">
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-3">
           {nonAccountingDays?.map((day) => (
             <div 
               key={day.id} 
-              className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100"
+              className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-200 hover:bg-neutral-50"
             >
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-2">
-                  <div className="bg-neutral-50 text-neutral-700 px-3 py-1.5 rounded-lg font-medium inline-block">
+                  <div className="bg-neutral-100 text-neutral-700 px-3 py-1.5 rounded-lg font-medium inline-block">
                     {format(parseISO(day.start_date), "dd/MM/yyyy")} -{" "}
                     {format(parseISO(day.end_date), "dd/MM/yyyy")}
                   </div>
-                  <p className="text-neutral-700">{day.reason}</p>
+                  <p className="text-neutral-600 bg-neutral-100 px-3 py-1.5 rounded-lg">{day.reason}</p>
                 </div>
                 <div className="flex gap-2">
                   {onEdit && (
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      className="text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 h-8 w-8"
+                      className="text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 h-8 w-8"
                       onClick={() => onEdit(day)}
                     >
                       <Pencil className="h-4 w-4" />
