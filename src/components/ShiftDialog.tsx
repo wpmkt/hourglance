@@ -63,6 +63,7 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["month-data"] });
     } catch (error) {
+      console.error('Erro ao registrar turno:', error);
       toast({
         title: "Erro ao registrar turno",
         description: "Ocorreu um erro ao salvar o turno. Tente novamente.",

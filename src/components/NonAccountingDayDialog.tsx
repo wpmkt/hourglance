@@ -61,6 +61,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["month-data"] });
     } catch (error) {
+      console.error('Erro ao registrar dia não contábil:', error);
       toast({
         title: "Erro ao registrar dia não contábil",
         description: "Ocorreu um erro ao salvar o registro. Tente novamente.",

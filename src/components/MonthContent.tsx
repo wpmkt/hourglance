@@ -9,6 +9,8 @@ import type { Database } from "@/integrations/supabase/types";
 import MonthHeader from "./month/MonthHeader";
 import MonthActions from "./month/MonthActions";
 import MonthStats from "./month/MonthStats";
+import ShiftsList from "./ShiftsList";
+import NonAccountingDaysList from "./NonAccountingDaysList";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -54,6 +56,8 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       const startDate = format(start, "yyyy-MM-dd");
       const endDate = format(end, "yyyy-MM-dd");
 
+      console.log('Fetching data for:', { startDate, endDate, userId });
+
       const [shiftsResponse, nonAccountingResponse] = await Promise.all([
         supabase
           .from("shifts")
@@ -69,6 +73,9 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
           .order("start_date", { ascending: true })
       ]);
+
+      console.log('Shifts Response:', shiftsResponse);
+      console.log('Non Accounting Response:', nonAccountingResponse);
 
       if (shiftsResponse.error) throw shiftsResponse.error;
       if (nonAccountingResponse.error) throw nonAccountingResponse.error;
@@ -144,7 +151,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   return (
     <div className="min-h-screen bg-[#9b87f5]">
       <div className="bg-[#9b87f5] text-white">
-        <div className="max-w-lg mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <MonthHeader currentDate={currentDate} />
           
           <MonthActions 
@@ -159,6 +166,13 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
             expectedHours={calculateExpectedHours()}
             workedHours={calculateWorkedHours()}
           />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <ShiftsList shifts={safeData.shifts} />
+            <NonAccountingDaysList 
+              nonAccountingDays={safeData.nonAccountingDays}
+            />
+          </div>
         </div>
       </div>
       <div className="hidden">
@@ -167,6 +181,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       </div>
     </div>
   );
-};
+}
 
 export default MonthContent;
