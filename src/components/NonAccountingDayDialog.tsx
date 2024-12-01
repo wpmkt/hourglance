@@ -104,47 +104,47 @@ export function NonAccountingDayDialog({ currentDate = new Date(), editData }: N
       <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-semibold text-gray-900">
+            <DialogTitle className="text-2xl font-semibold text-neutral-900">
               {editData ? "Editar Dia Não Contábil" : "Lançar Dia Não Contábil"}
             </DialogTitle>
-            <DialogDescription className="text-gray-500 mt-2">
+            <DialogDescription className="text-neutral-500 mt-2">
               {editData ? "Atualize as informações do registro." : "Registre períodos de férias, licenças ou outros dias não contábeis."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="startDate" className="text-right text-gray-700">
+              <Label htmlFor="startDate" className="text-right text-neutral-700">
                 Data Inicial
               </Label>
               <Input
                 id="startDate"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="endDate" className="text-right text-gray-700">
+              <Label htmlFor="endDate" className="text-right text-neutral-700">
                 Data Final
               </Label>
               <Input
                 id="endDate"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right text-gray-700">
+              <Label htmlFor="reason" className="text-right text-neutral-700">
                 Motivo
               </Label>
               <Input
                 id="reason"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 placeholder="Ex: Férias, Licença"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -156,7 +156,7 @@ export function NonAccountingDayDialog({ currentDate = new Date(), editData }: N
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-[#9b87f5] hover:bg-[#8B5CF6] text-white rounded-xl py-3"
+              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl py-3"
             >
               {loading ? "Salvando..." : (editData ? "Atualizar" : "Salvar")}
             </Button>

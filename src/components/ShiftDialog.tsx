@@ -108,60 +108,60 @@ export function ShiftDialog({ currentDate = new Date(), editData }: ShiftDialogP
       <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-semibold text-gray-900">
+            <DialogTitle className="text-2xl font-semibold text-neutral-900">
               {editData ? "Editar Turno" : "Lançar Turno"}
             </DialogTitle>
-            <DialogDescription className="text-gray-500 mt-2">
+            <DialogDescription className="text-neutral-500 mt-2">
               {editData ? "Atualize as informações do turno." : "Registre as horas trabalhadas no dia."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right text-gray-700">
+              <Label htmlFor="date" className="text-right text-neutral-700">
                 Data
               </Label>
               <Input
                 id="date"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="start" className="text-right text-gray-700">
+              <Label htmlFor="start" className="text-right text-neutral-700">
                 Início
               </Label>
               <Input
                 id="start"
                 type="time"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="end" className="text-right text-gray-700">
+              <Label htmlFor="end" className="text-right text-neutral-700">
                 Fim
               </Label>
               <Input
                 id="end"
                 type="time"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="comment" className="text-right text-gray-700">
+              <Label htmlFor="comment" className="text-right text-neutral-700">
                 Comentário
               </Label>
               <Input
                 id="comment"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
                 placeholder="Opcional"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -172,7 +172,7 @@ export function ShiftDialog({ currentDate = new Date(), editData }: ShiftDialogP
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl py-3"
+              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl py-3"
             >
               {loading ? "Salvando..." : (editData ? "Atualizar" : "Salvar")}
             </Button>
