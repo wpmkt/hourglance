@@ -16,7 +16,6 @@ const Month = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Garantir que temos uma data válida
   const currentDate = (() => {
     if (!id) return new Date();
     try {
@@ -28,27 +27,31 @@ const Month = () => {
   })();
 
   const fetchMonthData = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast({
-        title: "Erro de autenticação",
-        description: "Você precisa estar logado para acessar esta página.",
-        variant: "destructive",
-      });
-      navigate("/login");
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Erro de sessão:", sessionError);
+      throw new Error("Erro ao verificar autenticação");
+    }
+
+    if (!sessionData.session) {
       throw new Error("Usuário não autenticado");
     }
 
+    const userId = sessionData.session.user.id;
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
+
+    const startDate = format(start, "yyyy-MM-dd");
+    const endDate = format(end, "yyyy-MM-dd");
 
     // Buscar turnos
     const { data: shifts, error: shiftsError } = await supabase
       .from("shifts")
       .select("*")
-      .eq("user_id", user.id)
-      .gte("date", format(start, "yyyy-MM-dd"))
-      .lte("date", format(end, "yyyy-MM-dd"))
+      .eq("user_id", userId)
+      .gte("date", startDate)
+      .lte("date", endDate)
       .order("date", { ascending: true });
 
     if (shiftsError) {
@@ -60,8 +63,8 @@ const Month = () => {
     const { data: nonAccountingDays, error: nonAccountingError } = await supabase
       .from("non_accounting_days")
       .select("*")
-      .eq("user_id", user.id)
-      .or(`start_date.lte.${format(end, "yyyy-MM-dd")},end_date.gte.${format(start, "yyyy-MM-dd")}`)
+      .eq("user_id", userId)
+      .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
       .order("start_date", { ascending: true });
 
     if (nonAccountingError) {
@@ -69,19 +72,30 @@ const Month = () => {
       throw nonAccountingError;
     }
 
-    return { shifts: shifts || [], nonAccountingDays: nonAccountingDays || [] };
+    return {
+      shifts: shifts || [],
+      nonAccountingDays: nonAccountingDays || []
+    };
   };
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["month-data", id],
     queryFn: fetchMonthData,
+    retry: 1,
   });
 
   if (error) {
     console.error("Erro na query:", error);
+    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    
+    if (errorMessage === "Usuário não autenticado") {
+      navigate("/login");
+      return null;
+    }
+
     toast({
       title: "Erro ao carregar dados",
-      description: "Ocorreu um erro ao carregar os dados do mês.",
+      description: "Ocorreu um erro ao carregar os dados do mês. Por favor, tente novamente.",
       variant: "destructive",
     });
   }
