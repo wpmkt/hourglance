@@ -10,11 +10,14 @@ import MonthlySummary from "@/components/MonthlySummary";
 import ShiftsList from "@/components/ShiftsList";
 import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect, useState } from "react";
 
 const Month = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [session, setSession] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const currentDate = (() => {
     if (!id) return new Date();
@@ -26,19 +29,28 @@ const Month = () => {
     }
   })();
 
-  const fetchMonthData = async () => {
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError) {
-      console.error("Erro de sessão:", sessionError);
-      throw new Error("Erro ao verificar autenticação");
-    }
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsLoading(false);
+    });
 
-    if (!sessionData.session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (!session) {
+        navigate("/login");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const fetchMonthData = async () => {
+    if (!session?.user?.id) {
       throw new Error("Usuário não autenticado");
     }
 
-    const userId = sessionData.session.user.id;
+    const userId = session.user.id;
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
 
@@ -78,11 +90,32 @@ const Month = () => {
     };
   };
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["month-data", id],
+  const { data, error } = useQuery({
+    queryKey: ["month-data", id, session?.user?.id],
     queryFn: fetchMonthData,
+    enabled: !!session?.user?.id,
     retry: 1,
   });
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-lg">Carregando...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!session) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-lg">Redirecionando para o login...</div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (error) {
     console.error("Erro na query:", error);
@@ -142,16 +175,6 @@ const Month = () => {
     }
     navigate(`/month/${format(newDate, "yyyy-MM-dd")}`);
   };
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-lg">Carregando...</div>
-        </div>
-      </Layout>
-    );
-  }
 
   // Garantir que data existe, mesmo que vazio
   const safeData = {
