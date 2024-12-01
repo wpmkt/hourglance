@@ -1,27 +1,23 @@
 import Layout from "@/components/Layout";
-import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, startOfQuarter, endOfQuarter, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { format, startOfQuarter, endOfQuarter } from "date-fns";
 import { useSession } from "@/hooks/useSession";
+import { QuarterSelector } from "@/components/dashboard/QuarterSelector";
+import { QuarterCard } from "@/components/dashboard/QuarterCard";
+import { MonthsList } from "@/components/dashboard/MonthsList";
 
 const months = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+];
+
+const quarters = [
+  { id: "1", title: "1º Trimestre" },
+  { id: "2", title: "2º Trimestre" },
+  { id: "3", title: "3º Trimestre" },
+  { id: "4", title: "4º Trimestre" }
 ];
 
 const Index = () => {
@@ -80,7 +76,6 @@ const Index = () => {
     const { startDate, endDate } = getQuarterDates(Number(selectedQuarter));
     const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     
-    // Calculate non-accounting days
     const nonAccountingDays = quarterData.nonAccountingDays.reduce((acc, day) => {
       const dayStart = new Date(day.start_date);
       const dayEnd = new Date(day.end_date);
@@ -96,9 +91,8 @@ const Index = () => {
     }, 0);
 
     const workingDays = totalDays - nonAccountingDays;
-    const expectedHours = (workingDays * 8);
+    const expectedHours = workingDays * 8;
 
-    // Calculate worked hours
     const workedHours = quarterData.shifts.reduce((acc, shift) => {
       const start = new Date(`1970-01-01T${shift.start_time}`);
       let end = new Date(`1970-01-01T${shift.end_time}`);
@@ -120,29 +114,6 @@ const Index = () => {
 
   const stats = calculateQuarterStats();
 
-  const quarters = [
-    {
-      id: "1",
-      title: "1º Trimestre",
-      months: months.slice(0, 3)
-    },
-    {
-      id: "2",
-      title: "2º Trimestre",
-      months: months.slice(3, 6)
-    },
-    {
-      id: "3",
-      title: "3º Trimestre",
-      months: months.slice(6, 9)
-    },
-    {
-      id: "4",
-      title: "4º Trimestre",
-      months: months.slice(9, 12)
-    }
-  ];
-
   return (
     <Layout>
       <div className="space-y-8">
@@ -157,76 +128,22 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <TabsList className="grid grid-cols-2 md:grid-cols-2 w-full gap-4">
-            {quarters.map((quarter, index) => (
-              <TabsTrigger
-                key={quarter.id}
-                value={quarter.id}
-                className={`text-sm p-4 rounded-xl transition-all ${
-                  selectedQuarter === quarter.id
-                    ? "bg-primary text-white shadow-lg scale-105"
-                    : `bg-neutral-${100 + index * 100} hover:bg-neutral-${200 + index * 100}`
-                }`}
-              >
-                {quarter.title}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <QuarterSelector
+            quarters={quarters}
+            selectedQuarter={selectedQuarter}
+            onQuarterChange={setSelectedQuarter}
+          />
 
           <div className="col-span-1 md:col-span-2">
-            <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-neutral-900">
-                    {quarters.find(q => q.id === selectedQuarter)?.title}
-                  </h3>
-                  <span className="bg-neutral-50 px-3 py-1 rounded-lg text-sm text-neutral-600">
-                    {currentYear}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-neutral-50 p-4 rounded-xl">
-                    <p className="text-sm text-neutral-500 mb-1">Horas previstas</p>
-                    <p className="text-xl font-bold text-neutral-900">{stats.expectedHours.toFixed(1)}h</p>
-                  </div>
-                  
-                  <div className="bg-neutral-50 p-4 rounded-xl">
-                    <p className="text-sm text-neutral-500 mb-1">Horas trabalhadas</p>
-                    <p className="text-xl font-bold text-neutral-900">{stats.workedHours.toFixed(1)}h</p>
-                  </div>
-
-                  <div className="bg-neutral-50 p-4 rounded-xl">
-                    <p className="text-sm text-neutral-500 mb-1">Saldo</p>
-                    <p className={`text-xl font-bold ${stats.balance >= 0 ? 'text-success' : 'text-danger'}`}>
-                      {stats.balance >= 0 ? '+' : ''}{stats.balance.toFixed(1)}h
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <QuarterCard
+              quarter={quarters.find(q => q.id === selectedQuarter)!}
+              stats={stats}
+              currentYear={currentYear}
+            />
           </div>
         </div>
 
-        <div className="mt-12">
-          <h2 className="text-lg font-semibold text-neutral-900 mb-6">Meses</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {months.map((month, index) => (
-              <Link
-                key={month}
-                to={`/month/${index + 1}`}
-                className="group block"
-              >
-                <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100 group-hover:border-primary">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-base font-medium text-neutral-900">{month}</h3>
-                    <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-primary transition-colors" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
+        <MonthsList months={months} />
       </div>
     </Layout>
   );
