@@ -12,6 +12,7 @@ import MonthStats from "./month/MonthStats";
 import ShiftsList from "./ShiftsList";
 import NonAccountingDaysList from "./NonAccountingDaysList";
 import { calculateWorkingDays, calculateExpectedHours } from "@/utils/calculations";
+import { calculateNightMinutes } from "@/utils/timeCalculations";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
