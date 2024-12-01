@@ -26,12 +26,16 @@ const Month = () => {
   })();
 
   const fetchMonthData = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Usuário não autenticado");
+
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
 
     const { data: shifts, error: shiftsError } = await supabase
       .from("shifts")
       .select("*")
+      .eq("user_id", user.id)
       .gte("date", start.toISOString())
       .lte("date", end.toISOString())
       .order("date", { ascending: true });
@@ -41,6 +45,7 @@ const Month = () => {
     const { data: nonAccountingDays, error: nonAccountingError } = await supabase
       .from("non_accounting_days")
       .select("*")
+      .eq("user_id", user.id)
       .or(`start_date.lte.${end.toISOString()},end_date.gte.${start.toISOString()}`)
       .order("start_date", { ascending: true });
 
