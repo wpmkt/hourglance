@@ -76,7 +76,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
       <DialogTrigger asChild>
         <Button variant="outline" className="flex-1 bg-white text-blue-600 border-blue-600 py-4 rounded-2xl font-medium hover:bg-blue-50 transition-colors">
           <Plus className="w-4 h-4 mr-2" />
-          Lançar Dia Não Contábil
+          Não Contábil
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

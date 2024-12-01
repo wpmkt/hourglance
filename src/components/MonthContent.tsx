@@ -157,25 +157,15 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white">
         <div className="max-w-lg mx-auto px-4 py-3">
-          <div className="flex items-center justify-between mb-4">
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Menu className="w-6 h-6 text-gray-600" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Search className="w-6 h-6 text-gray-600" />
-            </button>
-          </div>
-          <div className="flex items-center gap-3 mb-6">
-            <button 
-              className="p-2 hover:bg-gray-100 rounded-full"
-              onClick={() => handleNavigate("prev")}
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <div>
-              <h2 className="text-sm text-gray-500">Bem-vindo de volta</h2>
-              <h1 className="text-xl font-semibold text-gray-900">Banco de Horas</h1>
-            </div>
+          <button 
+            className="p-2 hover:bg-gray-100 rounded-full"
+            onClick={() => handleNavigate("prev")}
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <div>
+            <h2 className="text-sm text-gray-500">Bem-vindo de volta</h2>
+            <h1 className="text-xl font-semibold text-gray-900">Banco de Horas</h1>
           </div>
         </div>
       </div>
@@ -195,9 +185,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Registros Recentes</h2>
-          </div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Registros Recentes</h2>
           <div className="space-y-4">
             <ShiftsList shifts={safeData.shifts} />
             <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
