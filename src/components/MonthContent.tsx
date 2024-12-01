@@ -6,15 +6,13 @@ import { ShiftDialog } from "@/components/ShiftDialog";
 import { NonAccountingDayDialog } from "@/components/NonAccountingDayDialog";
 import { useToast } from "@/components/ui/use-toast";
 import type { Database } from "@/integrations/supabase/types";
-import MonthHeader from "./month/MonthHeader";
-import MonthActions from "./month/MonthActions";
+import MonthTitle from "./month/MonthTitle";
+import MonthActionButtons from "./month/MonthActionButtons";
 import MonthStats from "./month/MonthStats";
 import ShiftsList from "./ShiftsList";
 import NonAccountingDaysList from "./NonAccountingDaysList";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Button } from "./ui/button";
-import { FileDown } from "lucide-react";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -204,7 +202,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     // Tabela de dias não contábeis
     if (safeData.nonAccountingDays.length > 0) {
       const finalY = (doc as any).lastAutoTable.finalY || 75;
-      doc.text('Dias Não Contábeis', 14, finalY + 15);
+      doc.text('Dias Não Contáveis', 14, finalY + 15);
       
       const nonAccountingData = safeData.nonAccountingDays.map(day => [
         format(new Date(day.start_date), 'dd/MM/yyyy'),
@@ -232,18 +230,12 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     <div className="min-h-screen bg-neutral-50">
       <div className="bg-gradient-to-b from-neutral-100 to-neutral-50/50">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center mb-6">
-            <MonthHeader currentDate={currentDate} />
-            <Button
-              onClick={handleExportPDF}
-              className="bg-neutral-800 text-white hover:bg-neutral-700 flex items-center gap-2 rounded-xl px-4 py-2 transition-colors duration-200"
-            >
-              <FileDown className="w-4 h-4" />
-              Exportar PDF
-            </Button>
-          </div>
+          <MonthTitle 
+            currentDate={currentDate}
+            onExportPDF={handleExportPDF}
+          />
           
-          <MonthActions 
+          <MonthActionButtons 
             onOpenShiftDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click()}
             onOpenNonAccountingDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click()}
           />
