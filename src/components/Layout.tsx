@@ -42,9 +42,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <nav className="bg-white border-b border-neutral-100 md:hidden">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex items-center justify-between h-16">
-                <Link to="/" className="text-lg font-semibold text-neutral-900">
-                  NoQap
-                </Link>
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon">
@@ -73,6 +70,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     </nav>
                   </SheetContent>
                 </Sheet>
+                <Link to="/" className="text-lg font-semibold text-neutral-900">
+                  NoQap
+                </Link>
               </div>
             </div>
           </nav>
