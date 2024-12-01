@@ -79,48 +79,48 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
           Não Contábil
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white p-6 rounded-2xl border-0 shadow-xl">
         <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Lançar Dia Não Contábil</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="mb-6">
+            <DialogTitle className="text-2xl font-semibold text-gray-900">Lançar Dia Não Contábil</DialogTitle>
+            <DialogDescription className="text-gray-500 mt-2">
               Registre períodos de férias, licenças ou outros dias não contábeis.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-6">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="startDate" className="text-right">
+              <Label htmlFor="startDate" className="text-right text-gray-700">
                 Data Inicial
               </Label>
               <Input
                 id="startDate"
                 type="date"
-                className="col-span-3"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="endDate" className="text-right">
+              <Label htmlFor="endDate" className="text-right text-gray-700">
                 Data Final
               </Label>
               <Input
                 id="endDate"
                 type="date"
-                className="col-span-3"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right">
+              <Label htmlFor="reason" className="text-right text-gray-700">
                 Motivo
               </Label>
               <Input
                 id="reason"
-                className="col-span-3"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                 placeholder="Ex: Férias, Licença"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -128,8 +128,12 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button type="submit" disabled={loading}>
+          <DialogFooter className="mt-8">
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3"
+            >
               {loading ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>

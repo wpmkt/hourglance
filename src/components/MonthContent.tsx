@@ -9,7 +9,7 @@ import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
-import { Menu, Search, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -163,10 +163,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <div>
-            <h2 className="text-sm text-gray-500">Bem-vindo de volta</h2>
-            <h1 className="text-xl font-semibold text-gray-900">Banco de Horas</h1>
-          </div>
         </div>
       </div>
 
