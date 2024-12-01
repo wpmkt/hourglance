@@ -46,8 +46,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         to="/"
         className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive("/")
-            ? "bg-white/20 text-white"
-            : "text-white/80 hover:bg-white/10"
+            ? "bg-neutral-100 text-neutral-900"
+            : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
         }`}
       >
         <Calendar className="w-5 h-5 mr-3" />
@@ -57,8 +57,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         to="/reports"
         className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
           isActive("/reports")
-            ? "bg-white/20 text-white"
-            : "text-white/80 hover:bg-white/10"
+            ? "bg-neutral-100 text-neutral-900"
+            : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
         }`}
       >
         <BarChart2 className="w-5 h-5 mr-3" />
@@ -68,28 +68,28 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-[#F1F0FB]">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Mobile Navigation */}
       <div className="lg:hidden">
-        <div className="flex items-center justify-between px-4 py-4 bg-gradient-to-r from-indigo-400/40 to-indigo-400/20">
+        <div className="flex items-center justify-between px-4 py-4 bg-white border-b border-neutral-100">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="p-2 text-indigo-900 hover:bg-indigo-400/10 rounded-lg transition-colors">
+              <button className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors">
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-[#F1F0FB] border-none">
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-white border-none">
               <nav className="flex flex-col gap-2 mt-6">
                 <NavLinks />
               </nav>
             </SheetContent>
           </Sheet>
-          <span className="text-xl font-bold text-indigo-900">
+          <span className="text-xl font-bold text-neutral-900">
             Controle de Horas
           </span>
           <button
             onClick={handleLogout}
-            className="p-2 text-indigo-900 hover:bg-indigo-400/10 rounded-lg transition-colors"
+            className="p-2 text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors"
           >
             <LogOut className="w-6 h-6" />
           </button>
@@ -101,20 +101,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Desktop Layout */}
       <div className="hidden lg:flex">
-        <aside className="w-64 fixed h-screen bg-gradient-to-b from-indigo-400/40 to-indigo-400/20 border-r border-indigo-200/30">
+        <aside className="w-64 fixed h-screen bg-white border-r border-neutral-100">
           <div className="flex flex-col h-full">
             <div className="p-6">
-              <span className="text-2xl font-bold text-indigo-900">
+              <span className="text-2xl font-bold text-neutral-900">
                 Controle de Horas
               </span>
             </div>
             <nav className="flex-1 px-4 space-y-2">
               <NavLinks />
             </nav>
-            <div className="p-4 border-t border-indigo-200/30">
+            <div className="p-4 border-t border-neutral-100">
               <button
                 onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 text-indigo-900 hover:bg-indigo-400/10 rounded-lg transition-colors"
+                className="flex items-center w-full px-4 py-2 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 rounded-lg transition-colors"
               >
                 <LogOut className="w-5 h-5 mr-3" />
                 Sair
