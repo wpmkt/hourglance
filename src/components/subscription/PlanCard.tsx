@@ -21,7 +21,7 @@ interface Product {
   };
 }
 
-const stripePromise = loadStripe("pk_test_51QPiphE1aaa3UksGXXXXXXXXXXXXXXXXXXXXXXXXXXXX"); // Substitua pela sua chave pública do Stripe
+const stripePromise = loadStripe("pk_live_51QPiAhE1aaa3UksG7bR4l7obWeggUWCzyTMy4xyId9r35C36t3sQVU8zUhD10lCl5gYidxUhpwrJQru8aWke1u5o00osMexOWL");
 
 export function PlanCard({ userId }: PlanCardProps) {
   const [isLoading, setIsLoading] = useState(false);
