@@ -68,28 +68,28 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-indigo-600">
+    <div className="min-h-screen bg-[#F1F0FB]">
       {/* Mobile Navigation */}
       <div className="lg:hidden">
-        <div className="flex items-center justify-between px-4 py-4">
+        <div className="flex items-center justify-between px-4 py-4 bg-gradient-to-r from-indigo-400/40 to-indigo-400/20">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors">
+              <button className="p-2 text-indigo-900 hover:bg-indigo-400/10 rounded-lg transition-colors">
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-indigo-600 border-none">
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-[#F1F0FB] border-none">
               <nav className="flex flex-col gap-2 mt-6">
                 <NavLinks />
               </nav>
             </SheetContent>
           </Sheet>
-          <span className="text-xl font-bold text-white">
+          <span className="text-xl font-bold text-indigo-900">
             Controle de Horas
           </span>
           <button
             onClick={handleLogout}
-            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 text-indigo-900 hover:bg-indigo-400/10 rounded-lg transition-colors"
           >
             <LogOut className="w-6 h-6" />
           </button>
@@ -101,20 +101,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Desktop Layout */}
       <div className="hidden lg:flex">
-        <aside className="w-64 fixed h-screen bg-indigo-600 border-r border-white/10">
+        <aside className="w-64 fixed h-screen bg-gradient-to-b from-indigo-400/40 to-indigo-400/20 border-r border-indigo-200/30">
           <div className="flex flex-col h-full">
             <div className="p-6">
-              <span className="text-2xl font-bold text-white">
+              <span className="text-2xl font-bold text-indigo-900">
                 Controle de Horas
               </span>
             </div>
             <nav className="flex-1 px-4 space-y-2">
               <NavLinks />
             </nav>
-            <div className="p-4 border-t border-white/10">
+            <div className="p-4 border-t border-indigo-200/30">
               <button
                 onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors"
+                className="flex items-center w-full px-4 py-2 text-indigo-900 hover:bg-indigo-400/10 rounded-lg transition-colors"
               >
                 <LogOut className="w-5 h-5 mr-3" />
                 Sair
