@@ -1,4 +1,4 @@
-import { calculateNightMinutes, calculateTotalHours } from "./timeCalculations";
+import { calculateTotalHours } from "./timeCalculations";
 import type { Database } from "@/integrations/supabase/types";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
@@ -14,11 +14,12 @@ export const calculateMonthStats = (
     0
   ).getDate();
 
-  const workingDays = daysInMonth - nonAccountingDays;
+  const workingDays = Math.max(0, daysInMonth - nonAccountingDays);
   const expectedHours = (160 / daysInMonth) * workingDays;
 
   const workedHours = shifts.reduce((acc, shift) => {
-    return acc + calculateTotalHours(shift.start_time, shift.end_time);
+    const shiftHours = calculateTotalHours(shift.start_time, shift.end_time);
+    return acc + shiftHours;
   }, 0);
 
   return {

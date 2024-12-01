@@ -18,13 +18,22 @@ const MonthlySummary = ({
 }: MonthlySummaryProps) => {
   const hoursBalance = workedHours - expectedHours;
   
+  const formatHours = (hours: number) => {
+    const wholeHours = Math.floor(hours);
+    const minutes = Math.round((hours - wholeHours) * 60);
+    if (minutes === 0) {
+      return `${wholeHours}h`;
+    }
+    return `${wholeHours}h${minutes.toString().padStart(2, '0')}min`;
+  };
+  
   return (
     <div className="space-y-6 mb-6">
       <div className="bg-white text-neutral-900 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
         <div className="flex items-start justify-between mb-8">
           <div>
             <p className="text-neutral-500 mb-1">Saldo Atual</p>
-            <h3 className="text-3xl font-bold text-neutral-900">{hoursBalance.toFixed(1)}h</h3>
+            <h3 className="text-3xl font-bold text-neutral-900">{formatHours(hoursBalance)}</h3>
           </div>
           <span className="bg-neutral-50 px-3 py-1 rounded-lg text-sm text-neutral-600">
             {new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
@@ -33,11 +42,11 @@ const MonthlySummary = ({
         <div className="flex justify-between items-center">
           <div>
             <p className="text-neutral-500 text-sm mb-1">Horas Previstas</p>
-            <p className="text-xl font-semibold text-neutral-900">{expectedHours.toFixed(1)}h</p>
+            <p className="text-xl font-semibold text-neutral-900">{formatHours(expectedHours)}</p>
           </div>
           <div>
             <p className="text-neutral-500 text-sm mb-1">Horas Trabalhadas</p>
-            <p className="text-xl font-semibold text-neutral-900">{workedHours.toFixed(1)}h</p>
+            <p className="text-xl font-semibold text-neutral-900">{formatHours(workedHours)}</p>
           </div>
         </div>
       </div>
