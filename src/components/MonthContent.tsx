@@ -59,6 +59,8 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     queryKey: ["month-data", format(currentDate, "yyyy-MM"), userId],
     queryFn: fetchMonthData,
     enabled: !!userId,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
   if (error) {
