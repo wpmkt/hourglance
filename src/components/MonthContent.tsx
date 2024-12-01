@@ -125,12 +125,12 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
         workedHours={calculateWorkedHours()}
       />
 
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <ShiftDialog />
         <NonAccountingDayDialog />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
         <ShiftsList shifts={safeData.shifts} />
       </div>
