@@ -42,26 +42,34 @@ const Month = () => {
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
 
+    // Buscar turnos
     const { data: shifts, error: shiftsError } = await supabase
       .from("shifts")
       .select("*")
       .eq("user_id", user.id)
-      .gte("date", start.toISOString())
-      .lte("date", end.toISOString())
+      .gte("date", format(start, "yyyy-MM-dd"))
+      .lte("date", format(end, "yyyy-MM-dd"))
       .order("date", { ascending: true });
 
-    if (shiftsError) throw shiftsError;
+    if (shiftsError) {
+      console.error("Erro ao buscar turnos:", shiftsError);
+      throw shiftsError;
+    }
 
+    // Buscar dias não contábeis
     const { data: nonAccountingDays, error: nonAccountingError } = await supabase
       .from("non_accounting_days")
       .select("*")
       .eq("user_id", user.id)
-      .or(`start_date.lte.${end.toISOString()},end_date.gte.${start.toISOString()}`)
+      .or(`start_date.lte.${format(end, "yyyy-MM-dd")},end_date.gte.${format(start, "yyyy-MM-dd")}`)
       .order("start_date", { ascending: true });
 
-    if (nonAccountingError) throw nonAccountingError;
+    if (nonAccountingError) {
+      console.error("Erro ao buscar dias não contábeis:", nonAccountingError);
+      throw nonAccountingError;
+    }
 
-    return { shifts, nonAccountingDays };
+    return { shifts: shifts || [], nonAccountingDays: nonAccountingDays || [] };
   };
 
   const { data, isLoading, error } = useQuery({
@@ -70,6 +78,7 @@ const Month = () => {
   });
 
   if (error) {
+    console.error("Erro na query:", error);
     toast({
       title: "Erro ao carregar dados",
       description: "Ocorreu um erro ao carregar os dados do mês.",
