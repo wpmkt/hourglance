@@ -7,7 +7,7 @@ export const calculateNightMinutes = (start: string, end: string) => {
     endDate.setDate(endDate.getDate() + 1);
   }
 
-  const nightStartHour = 22; // 22:00
+  const nightStartHour = 23; // 23:00
   const nightEndHour = 5;    // 05:00
   let nightMinutes = 0;
   let currentTime = new Date(startDate);
@@ -15,7 +15,7 @@ export const calculateNightMinutes = (start: string, end: string) => {
   // Itera minuto a minuto para calcular o tempo noturno
   while (currentTime < endDate) {
     const hour = currentTime.getHours();
-    // Se estiver entre 22h e 5h, conta como hora noturna
+    // Se estiver entre 23h e 5h, conta como hora noturna
     if (hour >= nightStartHour || hour < nightEndHour) {
       nightMinutes++;
     }

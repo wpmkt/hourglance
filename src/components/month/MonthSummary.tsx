@@ -26,7 +26,7 @@ const MonthSummary = ({
   
   return (
     <>
-      <Card className="bg-white rounded-xl p-6 mb-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
+      <div className="bg-white rounded-xl p-6 mb-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="w-5 h-5 text-neutral-500" />
           <h2 className="text-lg font-medium text-neutral-800">Dias do Mês</h2>
@@ -45,9 +45,9 @@ const MonthSummary = ({
             <span className="font-medium text-neutral-700">{workingDays}</span>
           </div>
         </div>
-      </Card>
+      </div>
 
-      <Card className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
+      <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
         <div className="flex items-center gap-2 mb-4">
           <Clock className="w-5 h-5 text-neutral-500" />
           <h2 className="text-lg font-medium text-neutral-800">Horas do Mês</h2>
@@ -68,7 +68,7 @@ const MonthSummary = ({
             </span>
           </div>
         </div>
-      </Card>
+      </div>
     </>
   );
 };
