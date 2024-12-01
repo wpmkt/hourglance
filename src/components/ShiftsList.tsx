@@ -42,21 +42,45 @@ const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
   };
 
   const handleDelete = async (id: string) => {
+    console.log('Iniciando processo de exclusão do turno:', id);
+    
     try {
-      const { error } = await supabase
+      console.log('Obtendo usuário atual...');
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Usuário atual:', user);
+
+      if (!user) {
+        console.error('Usuário não autenticado');
+        throw new Error("Usuário não autenticado");
+      }
+
+      console.log('Enviando requisição de exclusão para o Supabase...');
+      const { data, error } = await supabase
         .from("shifts")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .select();
 
-      if (error) throw error;
+      console.log('Resposta da exclusão:', { data, error });
+
+      if (error) {
+        console.error('Erro ao excluir turno:', error);
+        throw error;
+      }
+
+      console.log('Turno excluído com sucesso:', data);
 
       toast({
         title: "Turno excluído com sucesso!",
         description: "O registro foi removido.",
       });
 
-      queryClient.invalidateQueries({ queryKey: ["month-data"] });
+      console.log('Invalidando queries...');
+      await queryClient.invalidateQueries({ queryKey: ["month-data"] });
+      console.log('Queries invalidadas com sucesso');
     } catch (error) {
+      console.error('Erro capturado no catch:', error);
       toast({
         title: "Erro ao excluir turno",
         description: "Ocorreu um erro ao excluir o registro. Tente novamente.",
@@ -103,7 +127,10 @@ const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
                         variant="ghost" 
                         size="icon"
                         className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
-                        onClick={() => onEdit(shift)}
+                        onClick={() => {
+                          console.log('Iniciando edição do turno:', shift);
+                          onEdit(shift);
+                        }}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -128,7 +155,10 @@ const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
                           <AlertDialogAction 
-                            onClick={() => handleDelete(shift.id)}
+                            onClick={() => {
+                              console.log('Confirmação de exclusão para o turno:', shift.id);
+                              handleDelete(shift.id);
+                            }}
                             className="bg-red-500 hover:bg-red-600"
                           >
                             Excluir
