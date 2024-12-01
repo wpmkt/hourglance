@@ -24,7 +24,7 @@ interface ShiftItemProps {
   nightMinutes: number;
   totalHours: number;
   onDelete: (id: string) => void;
-  onEdit?: (shift: any) => void;
+  onEdit: (shift: any) => void;
 }
 
 const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftItemProps) => {
@@ -35,24 +35,21 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-purple-100 w-full max-w-full overflow-hidden">
+    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-purple-100">
       <div className="flex flex-col space-y-3">
-        {/* Header with date and actions */}
         <div className="flex justify-between items-center">
           <div className="bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg font-medium">
             {format(parseISO(shift.date), "dd/MM/yyyy")}
           </div>
           <div className="flex items-center gap-2">
-            {onEdit && (
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="text-purple-500 hover:text-purple-700 hover:bg-purple-50 h-8 w-8"
-                onClick={() => onEdit(shift)}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-purple-500 hover:text-purple-700 hover:bg-purple-50 h-8 w-8"
+              onClick={() => onEdit(shift)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button 
@@ -65,7 +62,9 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-white p-6 max-w-[90vw] w-full sm:max-w-[425px] rounded-2xl border-none shadow-xl">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-2xl font-semibold text-gray-900">Confirmar exclusão</AlertDialogTitle>
+                  <AlertDialogTitle className="text-2xl font-semibold text-gray-900">
+                    Confirmar exclusão
+                  </AlertDialogTitle>
                   <AlertDialogDescription className="text-gray-500 mt-2">
                     Tem certeza que deseja excluir este turno? Esta ação não pode ser desfeita.
                   </AlertDialogDescription>
@@ -88,7 +87,6 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
           </div>
         </div>
 
-        {/* Time information */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg text-sm">
             <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
@@ -113,7 +111,6 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
           </div>
         </div>
 
-        {/* Comment if exists */}
         {shift.comment && (
           <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded-lg break-words">
             {shift.comment}

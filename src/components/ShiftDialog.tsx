@@ -46,7 +46,7 @@ export function ShiftDialog({ currentDate = new Date(), editData }: ShiftDialogP
       setEndTime(editData.end_time.slice(0, 5));
       setComment(editData.comment || "");
     }
-  }, [editData]);
+  }, [editData, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

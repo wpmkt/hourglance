@@ -11,6 +11,10 @@ import MonthActions from "./month/MonthActions";
 import MonthStats from "./month/MonthStats";
 import ShiftsList from "./ShiftsList";
 import NonAccountingDaysList from "./NonAccountingDaysList";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { Button } from "./ui/button";
+import { FileDown } from "lucide-react";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -56,8 +60,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       const startDate = format(start, "yyyy-MM-dd");
       const endDate = format(end, "yyyy-MM-dd");
 
-      console.log('Fetching data for:', { startDate, endDate, userId });
-
       const [shiftsResponse, nonAccountingResponse] = await Promise.all([
         supabase
           .from("shifts")
@@ -73,9 +75,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
           .order("start_date", { ascending: true })
       ]);
-
-      console.log('Shifts Response:', shiftsResponse);
-      console.log('Non Accounting Response:', nonAccountingResponse);
 
       if (shiftsResponse.error) throw shiftsResponse.error;
       if (nonAccountingResponse.error) throw nonAccountingResponse.error;
@@ -149,20 +148,100 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   const handleEditShift = (shift: Shift) => {
-    document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click();
-    // You'll need to implement the logic to populate the form with the shift data
+    const dialogTrigger = document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]');
+    if (dialogTrigger) {
+      dialogTrigger.click();
+    }
   };
 
   const handleEditNonAccountingDay = (day: NonAccountingDay) => {
-    document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click();
-    // You'll need to implement the logic to populate the form with the non-accounting day data
+    const dialogTrigger = document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]');
+    if (dialogTrigger) {
+      dialogTrigger.click();
+    }
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const monthYear = format(currentDate, 'MMMM yyyy', { locale: ptBR });
+    
+    // Título
+    doc.setFontSize(20);
+    doc.text(`Relatório de Horas - ${monthYear}`, 14, 20);
+    
+    // Resumo
+    doc.setFontSize(12);
+    const workingDays = calculateWorkingDays();
+    const workedHours = calculateWorkedHours();
+    const expectedHours = calculateExpectedHours();
+    const balance = workedHours - expectedHours;
+    
+    doc.text([
+      `Dias úteis: ${workingDays}`,
+      `Horas esperadas: ${expectedHours.toFixed(1)}h`,
+      `Horas trabalhadas: ${workedHours.toFixed(1)}h`,
+      `Saldo: ${balance.toFixed(1)}h`,
+    ], 14, 40);
+
+    // Tabela de turnos
+    if (safeData.shifts.length > 0) {
+      doc.text('Turnos', 14, 70);
+      
+      const shiftsData = safeData.shifts.map(shift => [
+        format(new Date(shift.date), 'dd/MM/yyyy'),
+        shift.start_time.slice(0, 5),
+        shift.end_time.slice(0, 5),
+        shift.comment || ''
+      ]);
+
+      autoTable(doc, {
+        startY: 75,
+        head: [['Data', 'Início', 'Fim', 'Comentário']],
+        body: shiftsData,
+      });
+    }
+
+    // Tabela de dias não contábeis
+    if (safeData.nonAccountingDays.length > 0) {
+      const finalY = (doc as any).lastAutoTable.finalY || 75;
+      doc.text('Dias Não Contábeis', 14, finalY + 15);
+      
+      const nonAccountingData = safeData.nonAccountingDays.map(day => [
+        format(new Date(day.start_date), 'dd/MM/yyyy'),
+        format(new Date(day.end_date), 'dd/MM/yyyy'),
+        day.reason
+      ]);
+
+      autoTable(doc, {
+        startY: finalY + 20,
+        head: [['Data Inicial', 'Data Final', 'Motivo']],
+        body: nonAccountingData,
+      });
+    }
+
+    // Salvar o PDF
+    doc.save(`relatorio-${format(currentDate, 'yyyy-MM')}.pdf`);
+    
+    toast({
+      title: "PDF exportado com sucesso!",
+      description: "O relatório foi gerado e baixado.",
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#9b87f5]">
       <div className="bg-[#9b87f5] text-white">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <MonthHeader currentDate={currentDate} />
+          <div className="flex justify-between items-center mb-6">
+            <MonthHeader currentDate={currentDate} />
+            <Button
+              onClick={handleExportPDF}
+              className="bg-white text-[#9b87f5] hover:bg-gray-100 flex items-center gap-2 rounded-xl px-4 py-2"
+            >
+              <FileDown className="w-4 h-4" />
+              Exportar PDF
+            </Button>
+          </div>
           
           <MonthActions 
             onOpenShiftDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click()}
