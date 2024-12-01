@@ -32,3 +32,7 @@ verify_jwt = false
 [[functions]]
 name = "create-checkout"
 verify_jwt = true
+
+[[functions]]
+name = "get-products"
+verify_jwt = true
