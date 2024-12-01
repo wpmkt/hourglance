@@ -44,7 +44,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       if (currentHour >= nightStartHour || currentHour < nightEndHour) {
         nightMinutes += 10;
       }
-      currentDate.setTime(currentDate.getTime() + 3600000); // Add 1 hour in milliseconds
+      currentDate.setTime(currentDate.getTime() + 3600000);
       currentHour = currentDate.getHours();
     }
 
@@ -53,6 +53,10 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
 
   const fetchMonthData = async () => {
     try {
+      if (!currentDate || !(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
+        throw new Error("Data inválida");
+      }
+
       const start = startOfMonth(currentDate);
       const end = endOfMonth(currentDate);
       const startDate = format(start, "yyyy-MM-dd");
@@ -90,7 +94,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["month-data", format(currentDate, "yyyy-MM"), userId],
     queryFn: fetchMonthData,
-    enabled: !!userId,
+    enabled: !!userId && !!(currentDate instanceof Date) && !isNaN(currentDate.getTime()),
     refetchOnWindowFocus: true,
     staleTime: 0,
   });
@@ -118,6 +122,9 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   const calculateWorkingDays = () => {
+    if (!currentDate || !(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
+      return 0;
+    }
     const daysInMonth = endOfMonth(currentDate).getDate();
     const nonAccountingDays = safeData.nonAccountingDays.length;
     return daysInMonth - nonAccountingDays;
@@ -160,6 +167,15 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   const handleExportPDF = () => {
+    if (!currentDate || !(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
+      toast({
+        title: "Erro ao exportar PDF",
+        description: "Data inválida para exportação.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const doc = new jsPDF();
     const monthYear = format(currentDate, 'MMMM yyyy', { locale: ptBR });
     
@@ -266,6 +282,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       </div>
     </div>
   );
-}
+};
 
 export default MonthContent;
