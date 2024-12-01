@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { calculateMonthStats } from "@/utils/monthCalculations";
-import { startOfMonth, endOfMonth, format } from "date-fns";
+import { startOfMonth, endOfMonth, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -25,14 +25,14 @@ const QuarterStats = ({ quarter, year, shifts, nonAccountingDays }: QuarterStats
     
     // Filter shifts for current month
     const monthShifts = shifts.filter(shift => {
-      const shiftDate = new Date(shift.date);
+      const shiftDate = parseISO(shift.date);
       return shiftDate >= monthStart && shiftDate <= monthEnd;
     });
 
     // Filter and count non-accounting days for current month
     const monthNonAccountingDays = nonAccountingDays.reduce((count, day) => {
-      const startDate = new Date(day.start_date);
-      const endDate = new Date(day.end_date);
+      const startDate = parseISO(day.start_date);
+      const endDate = parseISO(day.end_date);
       
       // Check if the non-accounting day period intersects with current month
       if (startDate <= monthEnd && endDate >= monthStart) {
@@ -62,7 +62,7 @@ const QuarterStats = ({ quarter, year, shifts, nonAccountingDays }: QuarterStats
   const balance = quarterStats.workedHours - quarterStats.expectedHours;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
+    <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100 mt-8">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-neutral-900">
@@ -87,7 +87,7 @@ const QuarterStats = ({ quarter, year, shifts, nonAccountingDays }: QuarterStats
           <div className="bg-neutral-50 p-4 rounded-xl">
             <p className="text-sm text-neutral-500 mb-1">Saldo</p>
             <p className={`text-xl font-bold ${balance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-              {balance >= 0 ? '+' : ''}{formatHours(balance)}
+              {balance >= 0 ? '+' : ''}{formatHours(Math.abs(balance))}
             </p>
           </div>
         </div>
