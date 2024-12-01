@@ -36,3 +36,7 @@ verify_jwt = true
 [[functions]]
 name = "get-products"
 verify_jwt = true
+
+[[functions]]
+name = "create-payment-intent"
+verify_jwt = true

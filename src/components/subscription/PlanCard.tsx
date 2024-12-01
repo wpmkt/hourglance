@@ -5,6 +5,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface PlanCardProps {
   userId: string;
@@ -23,9 +25,75 @@ interface Product {
 
 const stripePromise = loadStripe("pk_live_51QPiAhE1aaa3UksG7bR4l7obWeggUWCzyTMy4xyId9r35C36t3sQVU8zUhD10lCl5gYidxUhpwrJQru8aWke1u5o00osMexOWL");
 
+const CheckoutForm = ({ onClose }: { onClose: () => void }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/success`,
+        },
+      });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Erro no pagamento",
+          description: error.message
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao processar pagamento:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro no pagamento",
+        description: "Ocorreu um erro ao processar seu pagamento. Tente novamente."
+      });
+    } finally {
+      setIsLoading(false);
+      onClose();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PaymentElement />
+      <Button 
+        type="submit" 
+        disabled={!stripe || isLoading} 
+        className="w-full"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processando...
+          </>
+        ) : (
+          'Pagar agora'
+        )}
+      </Button>
+    </form>
+  );
+};
+
 export function PlanCard({ userId }: PlanCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -55,7 +123,7 @@ export function PlanCard({ userId }: PlanCardProps) {
     try {
       setIsLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error } = await supabase.functions.invoke('create-payment-intent', {
         body: {
           userId,
           priceId
@@ -64,29 +132,28 @@ export function PlanCard({ userId }: PlanCardProps) {
 
       if (error) throw error;
 
-      if (!data?.sessionId) {
-        throw new Error('ID da sessão não recebido');
+      if (!data?.clientSecret) {
+        throw new Error('Client Secret não recebido');
       }
 
-      const stripe = await stripePromise;
-      if (!stripe) throw new Error('Stripe não inicializado');
-
-      const { error: stripeError } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId
-      });
-
-      if (stripeError) throw stripeError;
+      setClientSecret(data.clientSecret);
+      setIsPaymentModalOpen(true);
 
     } catch (error) {
-      console.error('Erro ao iniciar checkout:', error);
+      console.error('Erro ao iniciar pagamento:', error);
       toast({
         variant: "destructive",
-        title: "Erro ao iniciar checkout",
-        description: "Não foi possível iniciar o processo de assinatura. Tente novamente."
+        title: "Erro ao iniciar pagamento",
+        description: "Não foi possível iniciar o processo de pagamento. Tente novamente."
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const closePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setClientSecret(null);
   };
 
   if (products.length === 0) {
@@ -149,6 +216,27 @@ export function PlanCard({ userId }: PlanCardProps) {
           </CardFooter>
         </Card>
       ))}
+
+      <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Pagamento</DialogTitle>
+          </DialogHeader>
+          {clientSecret && (
+            <Elements 
+              stripe={stripePromise} 
+              options={{
+                clientSecret,
+                appearance: {
+                  theme: 'stripe',
+                },
+              }}
+            >
+              <CheckoutForm onClose={closePaymentModal} />
+            </Elements>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
