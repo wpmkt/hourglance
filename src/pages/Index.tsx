@@ -1,6 +1,8 @@
 import Layout from "@/components/Layout";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 const months = [
   "Janeiro",
@@ -19,6 +21,35 @@ const months = [
 
 const Index = () => {
   const currentYear = new Date().getFullYear();
+  const currentQuarter = Math.floor((new Date().getMonth() / 3)) + 1;
+  const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter.toString());
+
+  const quarters = [
+    {
+      id: "1",
+      title: "1º Trimestre",
+      hours: { planned: 480, worked: 485, balance: 5 },
+      months: months.slice(0, 3)
+    },
+    {
+      id: "2",
+      title: "2º Trimestre",
+      hours: { planned: 480, worked: 485, balance: 5 },
+      months: months.slice(3, 6)
+    },
+    {
+      id: "3",
+      title: "3º Trimestre",
+      hours: { planned: 480, worked: 485, balance: 5 },
+      months: months.slice(6, 9)
+    },
+    {
+      id: "4",
+      title: "4º Trimestre",
+      hours: { planned: 480, worked: 485, balance: 5 },
+      months: months.slice(9, 12)
+    }
+  ];
 
   return (
     <Layout>
@@ -33,50 +64,57 @@ const Index = () => {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((quarter) => (
-            <div
-              key={quarter}
-              className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100"
-            >
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-neutral-900">
-                    {quarter}º Trimestre
-                  </h3>
-                  <span className="bg-neutral-50 px-3 py-1 rounded-lg text-sm text-neutral-600">
-                    {currentYear}
-                  </span>
-                </div>
+        <Tabs defaultValue={selectedQuarter} value={selectedQuarter} onValueChange={setSelectedQuarter} className="w-full">
+          <TabsList className="grid grid-cols-4 w-full">
+            {quarters.map((quarter) => (
+              <TabsTrigger key={quarter.id} value={quarter.id} className="text-sm">
+                {quarter.title}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-neutral-500 mb-1">Horas previstas</p>
-                    <p className="text-2xl font-bold text-neutral-900">480h</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-sm text-neutral-500 mb-1">Horas trabalhadas</p>
-                    <p className="text-2xl font-bold text-neutral-900">485h</p>
+          {quarters.map((quarter) => (
+            <TabsContent key={quarter.id} value={quarter.id}>
+              <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-neutral-900">
+                      {quarter.title}
+                    </h3>
+                    <span className="bg-neutral-50 px-3 py-1 rounded-lg text-sm text-neutral-600">
+                      {currentYear}
+                    </span>
                   </div>
 
-                  <div className="pt-2 border-t border-neutral-100">
-                    <p className="text-sm text-neutral-500 mb-1">Saldo</p>
-                    <p className="text-2xl font-bold text-success">+5h</p>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-neutral-500 mb-1">Horas previstas</p>
+                      <p className="text-2xl font-bold text-neutral-900">{quarter.hours.planned}h</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-neutral-500 mb-1">Horas trabalhadas</p>
+                      <p className="text-2xl font-bold text-neutral-900">{quarter.hours.worked}h</p>
+                    </div>
+
+                    <div className="pt-2 border-t border-neutral-100">
+                      <p className="text-sm text-neutral-500 mb-1">Saldo</p>
+                      <p className="text-2xl font-bold text-success">+{quarter.hours.balance}h</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </TabsContent>
           ))}
-        </div>
+        </Tabs>
 
         <div className="mt-12">
           <h2 className="text-lg font-semibold text-neutral-900 mb-6">Meses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {months.map((month, index) => (
+            {quarters[Number(selectedQuarter) - 1].months.map((month, index) => (
               <Link
                 key={month}
-                to={`/month/${index + 1}`}
+                to={`/month/${(Number(selectedQuarter) - 1) * 3 + index + 1}`}
                 className="group block"
               >
                 <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100 group-hover:border-primary">
