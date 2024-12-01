@@ -62,10 +62,11 @@ Deno.serve(async (req) => {
       mode: 'subscription',
       success_url: `${req.headers.get('origin')}/success`,
       cancel_url: `${req.headers.get('origin')}/cancel`,
+      payment_method_types: ['card'],
     })
 
     return new Response(
-      JSON.stringify({ url: session.url }),
+      JSON.stringify({ sessionId: session.id }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
