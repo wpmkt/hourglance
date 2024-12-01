@@ -9,7 +9,7 @@ import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -154,39 +154,83 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white">
-        <div className="max-w-lg mx-auto px-4 py-3">
-          <button 
-            className="p-2 hover:bg-gray-100 rounded-full"
-            onClick={() => handleNavigate("prev")}
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
-      </div>
-
-      <div className="max-w-lg mx-auto px-4 -mt-4">
-        <MonthlySummary
-          daysInMonth={endOfMonth(currentDate).getDate()}
-          nonAccountingDays={safeData.nonAccountingDays.length}
-          workingDays={calculateWorkingDays()}
-          expectedHours={calculateExpectedHours()}
-          workedHours={calculateWorkedHours()}
-        />
-
-        <div className="flex gap-2 mb-8 mt-4">
-          <ShiftDialog currentDate={currentDate} />
-          <NonAccountingDayDialog currentDate={currentDate} />
-        </div>
-
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Registros Recentes</h2>
-          <div className="space-y-4">
-            <ShiftsList shifts={safeData.shifts} />
-            <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
+    <div className="min-h-screen bg-[#8B5CF6]">
+      <div className="bg-[#8B5CF6] text-white">
+        <div className="max-w-lg mx-auto px-4 py-4">
+          <div className="flex justify-between items-center mb-4">
+            <button 
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Voltar
+            </button>
+            <button 
+              onClick={() => navigate("/login")}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+            >
+              Sair
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
+          <h1 className="text-2xl font-semibold mb-6">
+            {format(currentDate, "d 'de' yyyy")}
+          </h1>
+          <div className="space-y-3 mb-6">
+            <button 
+              onClick={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click()}
+              className="w-full bg-white text-[#8B5CF6] py-3 rounded-lg font-medium hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
+            >
+              + Turno
+            </button>
+            <button
+              onClick={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click()}
+              className="w-full bg-white/20 text-white py-3 rounded-lg font-medium hover:bg-white/30 transition-colors flex items-center justify-center gap-2"
+            >
+              + Dia Não Contábil
+            </button>
+          </div>
+          <div className="bg-white/20 rounded-lg p-4 mb-6">
+            <h2 className="text-lg font-medium mb-4">Dias do Mês</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span>Dias Previstos</span>
+                <span className="font-medium">{endOfMonth(currentDate).getDate()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Dias Não Contábeis</span>
+                <span className="font-medium">{safeData.nonAccountingDays.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Dias a Trabalhar</span>
+                <span className="font-medium text-[#D6BCFA]">{calculateWorkingDays()}</span>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-4">
+            <h2 className="text-lg font-medium mb-4">Horas do Mês</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span>Horas Previstas</span>
+                <span className="font-medium">{calculateExpectedHours().toFixed(1)}h</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Horas Trabalhadas</span>
+                <span className="font-medium">{calculateWorkedHours().toFixed(1)}h</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Saldo</span>
+                <span className="font-medium text-[#D6BCFA]">
+                  {(calculateWorkedHours() - calculateExpectedHours()).toFixed(1)}h
+                </span>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+      <div className="hidden">
+        <ShiftDialog currentDate={currentDate} />
+        <NonAccountingDayDialog currentDate={currentDate} />
       </div>
     </div>
   );

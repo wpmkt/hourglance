@@ -76,10 +76,9 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-medium hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4 mr-2" />
+        <button data-dialog-trigger="shift" className="hidden">
           Turno
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-white p-6 rounded-2xl border-0 shadow-xl">
         <form onSubmit={handleSubmit}>
