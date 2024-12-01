@@ -154,7 +154,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50">
       <div className="bg-white">
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-4">
@@ -189,7 +189,12 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           workedHours={calculateWorkedHours()}
         />
 
-        <div className="mb-6">
+        <div className="flex gap-2 mb-8 mt-4">
+          <ShiftDialog currentDate={currentDate} />
+          <NonAccountingDayDialog currentDate={currentDate} />
+        </div>
+
+        <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Registros Recentes</h2>
           </div>
@@ -197,11 +202,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
             <ShiftsList shifts={safeData.shifts} />
             <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
           </div>
-        </div>
-
-        <div className="fixed bottom-6 left-0 right-0 px-4 max-w-lg mx-auto flex gap-2 z-50">
-          <ShiftDialog currentDate={currentDate} />
-          <NonAccountingDayDialog currentDate={currentDate} />
         </div>
       </div>
     </div>
