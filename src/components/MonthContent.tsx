@@ -23,16 +23,37 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const calculateNightMinutes = (start: string, end: string) => {
+    const startDate = new Date(`1970-01-01T${start}`);
+    let endDate = new Date(`1970-01-01T${end}`);
+    
+    if (endDate < startDate) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
+
+    const nightStartHour = 23;
+    const nightEndHour = 5;
+
+    let nightMinutes = 0;
+    let currentHour = startDate.getHours();
+    let currentDate = new Date(startDate);
+
+    while (currentDate < endDate) {
+      if (currentHour >= nightStartHour || currentHour < nightEndHour) {
+        nightMinutes += 10;
+      }
+      currentDate.setHours(currentDate.getHours() + 1);
+      currentHour = currentDate.getHours();
+    }
+
+    return nightMinutes;
+  };
+
   const fetchMonthData = async () => {
-    // Garantir que estamos usando o primeiro e último dia do mês corretamente
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
-
-    // Formatar as datas no formato esperado pelo Supabase (YYYY-MM-DD)
     const startDate = format(start, "yyyy-MM-dd");
     const endDate = format(end, "yyyy-MM-dd");
-
-    console.log('Buscando dados para o período:', { startDate, endDate, userId });
 
     try {
       const [shiftsResponse, nonAccountingResponse] = await Promise.all([
@@ -50,9 +71,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
           .order("start_date", { ascending: true })
       ]);
-
-      console.log('Resposta shifts:', shiftsResponse);
-      console.log('Resposta non_accounting_days:', nonAccountingResponse);
 
       if (shiftsResponse.error) throw shiftsResponse.error;
       if (nonAccountingResponse.error) throw nonAccountingResponse.error;
@@ -106,9 +124,17 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const calculateWorkedHours = () => {
     return safeData.shifts.reduce((acc, shift) => {
       const start = new Date(`1970-01-01T${shift.start_time}`);
-      const end = new Date(`1970-01-01T${shift.end_time}`);
-      const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-      return acc + hours;
+      let end = new Date(`1970-01-01T${shift.end_time}`);
+      
+      if (end < start) {
+        end.setDate(end.getDate() + 1);
+      }
+
+      const baseHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+      const nightMinutes = calculateNightMinutes(shift.start_time, shift.end_time);
+      const additionalHours = nightMinutes / 60;
+
+      return acc + baseHours + additionalHours;
     }, 0);
   };
 
