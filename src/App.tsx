@@ -10,6 +10,7 @@ import Month from "./pages/Month";
 import Login from "./pages/Login";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
+import Subscription from "./pages/Subscription";
 import { useToast } from "./components/ui/use-toast";
 
 const queryClient = new QueryClient({
@@ -69,12 +70,34 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSession = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
+
+        if (currentSession) {
+          const { data: subscriptionData } = await supabase
+            .from('subscriptions')
+            .select('*')
+            .eq('user_id', currentSession.user.id)
+            .single();
+
+          setSubscription(subscriptionData);
+
+          // Verificar se o trial expirou e não há assinatura ativa
+          if (subscriptionData) {
+            const trialEnded = new Date(subscriptionData.trial_ends_at) < new Date();
+            const noActiveSubscription = !subscriptionData.stripe_subscription_id;
+            
+            if (trialEnded && noActiveSubscription && window.location.pathname !== '/subscription') {
+              navigate('/subscription');
+            }
+          }
+        }
       } catch (error) {
         console.error("Erro ao verificar sessão:", error);
       } finally {
@@ -89,7 +112,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -115,6 +138,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/subscription" element={<Subscription />} />
             <Route
               path="/"
               element={
