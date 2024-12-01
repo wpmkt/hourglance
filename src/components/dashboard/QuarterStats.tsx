@@ -62,7 +62,7 @@ const QuarterStats = ({ quarter, year, shifts, nonAccountingDays }: QuarterStats
   const balance = quarterStats.workedHours - quarterStats.expectedHours;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100 mt-12">
+    <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100 mt-20">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-neutral-900">
