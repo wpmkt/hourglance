@@ -8,11 +8,10 @@ import { useToast } from "@/components/ui/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 import MonthTitle from "./month/MonthTitle";
 import MonthActionButtons from "./month/MonthActionButtons";
-import MonthStats from "./month/MonthStats";
+import MonthSummary from "./month/MonthSummary";
 import ShiftsList from "./ShiftsList";
 import NonAccountingDaysList from "./NonAccountingDaysList";
-import { calculateWorkingDays, calculateExpectedHours } from "@/utils/calculations";
-import { calculateNightMinutes } from "@/utils/timeCalculations";
+import { calculateMonthStats } from "@/utils/monthCalculations";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -106,27 +105,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   const nonAccountingDays = calculateNonAccountingDays();
-  const workingDays = calculateWorkingDays(currentDate, nonAccountingDays);
-  const expectedHours = calculateExpectedHours(currentDate, workingDays);
-
-  const calculateWorkedHours = () => {
-    return safeData.shifts.reduce((acc, shift) => {
-      const start = new Date(`1970-01-01T${shift.start_time}`);
-      let end = new Date(`1970-01-01T${shift.end_time}`);
-      
-      if (end < start) {
-        end.setDate(end.getDate() + 1);
-      }
-
-      const baseHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-      const nightMinutes = calculateNightMinutes(shift.start_time, shift.end_time);
-      const additionalHours = nightMinutes / 60;
-
-      return acc + baseHours + additionalHours;
-    }, 0);
-  };
-
-  const workedHours = calculateWorkedHours();
+  const monthStats = calculateMonthStats(currentDate, safeData.shifts, nonAccountingDays);
 
   const handleEditShift = (shift: Shift) => {
     const dialogTrigger = document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]');
@@ -162,10 +141,10 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     // Resumo
     doc.setFontSize(12);
     doc.text([
-      `Dias úteis: ${workingDays}`,
-      `Horas esperadas: ${expectedHours.toFixed(1)}h`,
-      `Horas trabalhadas: ${workedHours.toFixed(1)}h`,
-      `Saldo: ${(workedHours - expectedHours).toFixed(1)}h`,
+      `Dias úteis: ${monthStats.workingDays}`,
+      `Horas esperadas: ${monthStats.expectedHours.toFixed(1)}h`,
+      `Horas trabalhadas: ${monthStats.workedHours.toFixed(1)}h`,
+      `Saldo: ${monthStats.balance.toFixed(1)}h`,
     ], 14, 40);
 
     // Tabela de turnos
@@ -204,7 +183,6 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       });
     }
 
-    // Salvar o PDF
     doc.save(`relatorio-${format(currentDate, 'yyyy-MM')}.pdf`);
     
     toast({
@@ -227,12 +205,12 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
             onOpenNonAccountingDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click()}
           />
 
-          <MonthStats 
-            daysInMonth={endOfMonth(currentDate).getDate()}
+          <MonthSummary 
+            daysInMonth={monthStats.daysInMonth}
             nonAccountingDays={nonAccountingDays}
-            workingDays={workingDays}
-            expectedHours={expectedHours}
-            workedHours={workedHours}
+            workingDays={monthStats.workingDays}
+            expectedHours={monthStats.expectedHours}
+            workedHours={monthStats.workedHours}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
