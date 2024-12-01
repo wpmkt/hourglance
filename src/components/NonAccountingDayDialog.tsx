@@ -30,10 +30,14 @@ export function NonAccountingDayDialog() {
     setLoading(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Usuário não autenticado");
+
       const { error } = await supabase.from("non_accounting_days").insert({
         start_date: startDate,
         end_date: endDate,
         reason,
+        user_id: user.id
       });
 
       if (error) throw error;

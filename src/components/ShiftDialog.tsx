@@ -31,11 +31,15 @@ export function ShiftDialog() {
     setLoading(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Usuário não autenticado");
+
       const { error } = await supabase.from("shifts").insert({
         date,
         start_time: startTime,
         end_time: endTime,
         comment: comment || null,
+        user_id: user.id
       });
 
       if (error) throw error;
@@ -134,4 +138,4 @@ export function ShiftDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+};
