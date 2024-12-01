@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Calendar, BarChart2, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -13,16 +13,32 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
-      navigate("/login");
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        throw error;
+      }
+
+      // Limpa qualquer estado local se necessário
+      localStorage.clear();
+      
+      // Força navegação para página de login
+      navigate("/login", { replace: true });
+      
       toast({
         title: "Logout realizado com sucesso",
         description: "Você foi desconectado da sua conta",
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Erro ao realizar logout:", error);
+      
+      // Mesmo com erro, vamos forçar a limpeza da sessão
+      localStorage.clear();
+      navigate("/login", { replace: true });
+      
       toast({
-        title: "Erro ao realizar logout",
-        description: "Ocorreu um erro ao tentar desconectar",
+        title: "Aviso durante o logout",
+        description: "Sessão finalizada localmente",
         variant: "destructive",
       });
     }
