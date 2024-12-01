@@ -18,21 +18,21 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-neutral-50">
         <Sidebar side="left" variant="sidebar" collapsible="none">
-          <SidebarHeader className="flex items-center h-16 border-b border-neutral-100">
-            <Link to="/" className="text-lg font-semibold text-neutral-900 px-4">
+          <SidebarHeader className="flex items-center h-16 px-6 border-b border-neutral-100">
+            <Link to="/" className="text-lg font-semibold text-neutral-900">
               NoQap
             </Link>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="px-2 py-4">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/">Dashboard</Link>
+                  <Link to="/" className="w-full text-left">Dashboard</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/reports">Relatórios</Link>
+                  <Link to="/reports" className="w-full text-left">Relatórios</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -51,17 +51,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                       <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="left">
-                    <nav className="flex flex-col gap-4">
+                  <SheetContent side="left" className="w-[240px] p-0">
+                    <div className="px-6 py-4 border-b border-neutral-100">
+                      <Link to="/" className="text-lg font-semibold text-neutral-900">
+                        NoQap
+                      </Link>
+                    </div>
+                    <nav className="px-2 py-4">
                       <Link
                         to="/"
-                        className="text-lg font-medium text-neutral-900 hover:text-neutral-600 transition-colors"
+                        className="block px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-100 rounded-md"
                       >
                         Dashboard
                       </Link>
                       <Link
                         to="/reports"
-                        className="text-lg font-medium text-neutral-900 hover:text-neutral-600 transition-colors"
+                        className="block px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-100 rounded-md"
                       >
                         Relatórios
                       </Link>
