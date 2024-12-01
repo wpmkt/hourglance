@@ -1,11 +1,32 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Calendar, BarChart2, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "./ui/use-toast";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/login");
+      toast({
+        title: "Logout realizado com sucesso",
+        description: "Você foi desconectado da sua conta",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao realizar logout",
+        description: "Ocorreu um erro ao tentar desconectar",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -42,7 +63,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
             <div className="flex items-center">
-              <button className="p-2 rounded-md text-neutral-500 hover:text-neutral-700">
+              <button 
+                onClick={handleLogout}
+                className="p-2 rounded-md text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+              >
                 <LogOut className="w-5 h-5" />
               </button>
             </div>
