@@ -55,21 +55,19 @@ const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
       }
 
       console.log('Enviando requisição de exclusão para o Supabase...');
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("shifts")
         .delete()
-        .eq("id", id)
-        .eq("user_id", user.id)
-        .select();
+        .match({ id: id, user_id: user.id });
 
-      console.log('Resposta da exclusão:', { data, error });
+      console.log('Resposta da exclusão:', { error });
 
       if (error) {
         console.error('Erro ao excluir turno:', error);
         throw error;
       }
 
-      console.log('Turno excluído com sucesso:', data);
+      console.log('Turno excluído com sucesso');
 
       toast({
         title: "Turno excluído com sucesso!",
