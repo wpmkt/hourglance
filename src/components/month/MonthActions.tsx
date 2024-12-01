@@ -1,4 +1,4 @@
-import { Police } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 interface MonthActionsProps {
   onOpenShiftDialog: () => void;
