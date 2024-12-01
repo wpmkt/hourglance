@@ -76,6 +76,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_admin: boolean | null
           status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -86,6 +87,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_admin?: boolean | null
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -96,6 +98,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_admin?: boolean | null
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
