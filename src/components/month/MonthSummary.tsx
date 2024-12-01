@@ -9,6 +9,12 @@ interface MonthSummaryProps {
   workedHours: number;
 }
 
+const formatHours = (hours: number) => {
+  const wholeHours = Math.floor(hours);
+  const minutes = Math.round((hours - wholeHours) * 60);
+  return `${wholeHours}h${minutes > 0 ? minutes.toString().padStart(2, '0') + 'min' : ''}`;
+};
+
 const MonthSummary = ({
   daysInMonth,
   nonAccountingDays,
@@ -49,16 +55,16 @@ const MonthSummary = ({
         <div className="space-y-4">
           <div className="flex justify-between">
             <span className="text-neutral-600">Horas Previstas</span>
-            <span className="font-medium text-neutral-800">{expectedHours.toFixed(1)}h</span>
+            <span className="font-medium text-neutral-800">{formatHours(expectedHours)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-neutral-600">Horas Trabalhadas</span>
-            <span className="font-medium text-neutral-800">{workedHours.toFixed(1)}h</span>
+            <span className="font-medium text-neutral-800">{formatHours(workedHours)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-neutral-600">Saldo</span>
             <span className="font-medium text-neutral-700">
-              {balance.toFixed(1)}h
+              {formatHours(balance)}
             </span>
           </div>
         </div>

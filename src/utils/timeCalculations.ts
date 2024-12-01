@@ -22,8 +22,8 @@ export const calculateNightMinutes = (start: string, end: string) => {
     currentTime.setMinutes(currentTime.getMinutes() + 1);
   }
 
-  // Para cada hora noturna completa, adiciona 7.5 minutos (12.5% = 7.5 minutos por hora)
-  return Math.floor(nightMinutes / 60) * 7.5;
+  // Para cada hora noturna completa, adiciona 10 minutos
+  return Math.floor(nightMinutes / 60) * 10;
 };
 
 export const calculateTotalHours = (start: string, end: string) => {
