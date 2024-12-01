@@ -14,15 +14,15 @@ interface QuarterSelectorProps {
 export const QuarterSelector = ({ quarters, selectedQuarter, onQuarterChange }: QuarterSelectorProps) => {
   return (
     <Tabs value={selectedQuarter} onValueChange={onQuarterChange} className="w-full">
-      <TabsList className="grid grid-cols-2 md:grid-cols-2 w-full gap-6 bg-transparent p-0">
-        {quarters.map((quarter) => (
+      <TabsList className="grid grid-cols-2 md:grid-cols-2 w-full gap-4">
+        {quarters.map((quarter, index) => (
           <TabsTrigger
             key={quarter.id}
             value={quarter.id}
-            className={`text-base p-6 rounded-xl transition-all border ${
+            className={`text-sm p-4 rounded-xl transition-all ${
               selectedQuarter === quarter.id
-                ? "bg-white text-primary border-primary shadow-lg"
-                : "bg-white hover:bg-neutral-50 border-neutral-100"
+                ? "bg-primary text-white shadow-lg scale-105"
+                : `hover:bg-neutral-100 bg-white`
             }`}
           >
             {quarter.title}
