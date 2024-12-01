@@ -35,17 +35,17 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-indigo-100">
+    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100">
       <div className="flex flex-col space-y-3">
         <div className="flex justify-between items-center">
-          <div className="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg font-medium">
+          <div className="bg-neutral-50 text-neutral-700 px-3 py-1.5 rounded-lg font-medium">
             {format(parseISO(shift.date), "dd/MM/yyyy")}
           </div>
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 h-8 w-8"
+              className="text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 h-8 w-8"
               onClick={() => onEdit(shift)}
             >
               <Pencil className="h-4 w-4" />
@@ -62,16 +62,16 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-white p-6 max-w-[90vw] w-full sm:max-w-[425px] rounded-2xl border-none shadow-xl">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-2xl font-semibold text-gray-900">
+                  <AlertDialogTitle className="text-2xl font-semibold text-neutral-900">
                     Confirmar exclusão
                   </AlertDialogTitle>
-                  <AlertDialogDescription className="text-gray-500 mt-2">
+                  <AlertDialogDescription className="text-neutral-500 mt-2">
                     Tem certeza que deseja excluir este turno? Esta ação não pode ser desfeita.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="mt-8">
                   <div className="flex flex-col sm:flex-row gap-3 w-full">
-                    <AlertDialogCancel className="w-full sm:w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-900 border-0">
+                    <AlertDialogCancel className="w-full sm:w-1/2 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border-0">
                       Cancelar
                     </AlertDialogCancel>
                     <AlertDialogAction 
@@ -88,22 +88,22 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg text-sm">
-            <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
-            <span className="text-gray-700 whitespace-nowrap">
+          <div className="flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg text-sm">
+            <Clock className="h-4 w-4 text-neutral-500 flex-shrink-0" />
+            <span className="text-neutral-700 whitespace-nowrap">
               {shift.start_time.slice(0, 5)} - {shift.end_time.slice(0, 5)}
             </span>
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="text-lg font-semibold text-indigo-700">
+            <div className="text-lg font-semibold text-neutral-700">
               {formatDuration(totalHours)}
             </div>
             
             {nightMinutes > 0 && (
-              <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-lg">
-                <Moon className="h-4 w-4 text-indigo-500 flex-shrink-0" />
-                <span className="text-indigo-700 font-medium text-sm whitespace-nowrap">
+              <div className="flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg">
+                <Moon className="h-4 w-4 text-neutral-500 flex-shrink-0" />
+                <span className="text-neutral-700 font-medium text-sm whitespace-nowrap">
                   {nightMinutes}min
                 </span>
               </div>
@@ -112,7 +112,7 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
         </div>
 
         {shift.comment && (
-          <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded-lg break-words">
+          <div className="text-sm text-neutral-500 bg-neutral-50 p-2 rounded-lg break-words">
             {shift.comment}
           </div>
         )}

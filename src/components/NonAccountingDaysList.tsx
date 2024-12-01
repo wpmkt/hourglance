@@ -62,30 +62,30 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
   return (
     <Card className="h-[400px] flex flex-col bg-white">
       <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
-        <Calendar className="h-5 w-5 text-[#8B5CF6]" />
-        <h3 className="text-lg font-medium text-gray-900">Dias Não Contábeis</h3>
+        <Calendar className="h-5 w-5 text-neutral-500" />
+        <h3 className="text-lg font-medium text-neutral-800">Dias Não Contábeis</h3>
       </div>
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-3">
           {nonAccountingDays?.map((day) => (
             <div 
               key={day.id} 
-              className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-purple-100"
+              className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-neutral-100"
             >
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-2">
-                  <div className="bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg font-medium inline-block">
+                  <div className="bg-neutral-50 text-neutral-700 px-3 py-1.5 rounded-lg font-medium inline-block">
                     {format(parseISO(day.start_date), "dd/MM/yyyy")} -{" "}
                     {format(parseISO(day.end_date), "dd/MM/yyyy")}
                   </div>
-                  <p className="text-gray-700">{day.reason}</p>
+                  <p className="text-neutral-700">{day.reason}</p>
                 </div>
                 <div className="flex gap-2">
                   {onEdit && (
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      className="text-purple-500 hover:text-purple-700 hover:bg-purple-50 h-8 w-8"
+                      className="text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 h-8 w-8"
                       onClick={() => onEdit(day)}
                     >
                       <Pencil className="h-4 w-4" />
@@ -103,16 +103,16 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
                     </AlertDialogTrigger>
                     <AlertDialogContent className="bg-white p-6 max-w-[90vw] w-full sm:max-w-[425px] rounded-2xl border-none shadow-xl">
                       <AlertDialogHeader>
-                        <AlertDialogTitle className="text-2xl font-semibold text-gray-900">
+                        <AlertDialogTitle className="text-2xl font-semibold text-neutral-900">
                           Confirmar exclusão
                         </AlertDialogTitle>
-                        <AlertDialogDescription className="text-gray-500 mt-2">
+                        <AlertDialogDescription className="text-neutral-500 mt-2">
                           Tem certeza que deseja excluir este dia não contábil? Esta ação não pode ser desfeita.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter className="mt-8">
                         <div className="flex flex-col sm:flex-row gap-3 w-full">
-                          <AlertDialogCancel className="w-full sm:w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-900 border-0">
+                          <AlertDialogCancel className="w-full sm:w-1/2 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border-0">
                             Cancelar
                           </AlertDialogCancel>
                           <AlertDialogAction 
@@ -130,7 +130,7 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
             </div>
           ))}
           {(!nonAccountingDays || nonAccountingDays.length === 0) && (
-            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-8 text-neutral-500">
               <Calendar className="h-8 w-8 mb-2 opacity-50" />
               <p className="text-center">
                 Nenhum dia não contábil registrado

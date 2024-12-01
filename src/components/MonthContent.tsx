@@ -229,14 +229,14 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F1F0FB]">
-      <div className="bg-gradient-to-b from-indigo-400/40 to-indigo-400/20 text-indigo-900">
+    <div className="min-h-screen bg-neutral-50">
+      <div className="bg-gradient-to-b from-neutral-100 to-neutral-50/50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-6">
             <MonthHeader currentDate={currentDate} />
             <Button
               onClick={handleExportPDF}
-              className="bg-indigo-500 text-white hover:bg-indigo-600 flex items-center gap-2 rounded-xl px-4 py-2"
+              className="bg-neutral-800 text-white hover:bg-neutral-700 flex items-center gap-2 rounded-xl px-4 py-2 transition-colors duration-200"
             >
               <FileDown className="w-4 h-4" />
               Exportar PDF
