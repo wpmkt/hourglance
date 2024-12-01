@@ -2,7 +2,7 @@ export const calculateNightMinutes = (start: string, end: string) => {
   const startDate = new Date(`1970-01-01T${start}`);
   let endDate = new Date(`1970-01-01T${end}`);
   
-  // If end time is before start time, it means the shift goes into the next day
+  // Se o horário final for menor que o inicial, significa que passou para o próximo dia
   if (endDate < startDate) {
     endDate.setDate(endDate.getDate() + 1);
   }
@@ -12,34 +12,36 @@ export const calculateNightMinutes = (start: string, end: string) => {
   let nightMinutes = 0;
   let currentTime = new Date(startDate);
 
+  // Itera minuto a minuto para calcular o tempo noturno
   while (currentTime < endDate) {
-    const currentHour = currentTime.getHours();
-    if (currentHour >= nightStartHour || currentHour < nightEndHour) {
+    const hour = currentTime.getHours();
+    // Se estiver entre 22h e 5h, conta como hora noturna
+    if (hour >= nightStartHour || hour < nightEndHour) {
       nightMinutes++;
     }
     currentTime.setMinutes(currentTime.getMinutes() + 1);
   }
 
-  // For every complete hour during night shift, add 10 minutes
-  return Math.floor(nightMinutes / 60) * 10;
+  // Para cada hora noturna completa, adiciona 7.5 minutos (12.5% = 7.5 minutos por hora)
+  return Math.floor(nightMinutes / 60) * 7.5;
 };
 
 export const calculateTotalHours = (start: string, end: string) => {
   const startDate = new Date(`1970-01-01T${start}`);
   let endDate = new Date(`1970-01-01T${end}`);
   
-  // If end time is before start time, it means the shift goes into the next day
+  // Se o horário final for menor que o inicial, significa que passou para o próximo dia
   if (endDate < startDate) {
     endDate.setDate(endDate.getDate() + 1);
   }
 
-  // Calculate base duration in milliseconds
+  // Calcula a duração base em milissegundos
   const durationMs = endDate.getTime() - startDate.getTime();
   
-  // Convert to hours
+  // Converte para horas
   const baseHours = durationMs / (1000 * 60 * 60);
   
-  // Calculate night shift bonus (in hours)
+  // Calcula o adicional noturno (em horas)
   const nightMinutes = calculateNightMinutes(start, end);
   const nightHoursBonus = nightMinutes / 60;
 
