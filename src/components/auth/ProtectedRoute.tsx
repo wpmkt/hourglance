@@ -19,11 +19,16 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         setSession(currentSession);
 
         if (currentSession) {
-          const { data: subscriptionData } = await supabase
+          const { data: subscriptionData, error } = await supabase
             .from('subscriptions')
             .select('*')
             .eq('user_id', currentSession.user.id)
-            .single();
+            .maybeSingle();
+
+          if (error && error.code !== 'PGRST116') {
+            console.error("Erro ao buscar assinatura:", error);
+            return;
+          }
 
           setSubscription(subscriptionData);
 
