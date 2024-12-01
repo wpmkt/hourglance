@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { calculateMonthStats } from "@/utils/monthCalculations";
-import { startOfMonth, endOfMonth, format } from "date-fns";
+import { startOfMonth, endOfMonth, format, parseISO } from "date-fns";
 import type { Database } from "@/integrations/supabase/types";
 import { calculateTotalHours } from "@/utils/timeCalculations";
 
@@ -22,14 +22,14 @@ const MonthCard = ({ month, year, shifts, nonAccountingDays }: MonthCardProps) =
 
   // Filtra os turnos do mês atual
   const monthShifts = shifts.filter(shift => {
-    const shiftDate = new Date(shift.date);
+    const shiftDate = parseISO(shift.date);
     return shiftDate >= monthStart && shiftDate <= monthEnd;
   });
 
   // Calcula dias não contábeis para o mês atual
   const monthNonAccountingDays = nonAccountingDays.reduce((count, day) => {
-    const startDate = new Date(day.start_date);
-    const endDate = new Date(day.end_date);
+    const startDate = parseISO(day.start_date);
+    const endDate = parseISO(day.end_date);
     
     if (startDate <= monthEnd && endDate >= monthStart) {
       const effectiveStart = startDate < monthStart ? monthStart : startDate;
