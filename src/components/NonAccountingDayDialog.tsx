@@ -19,11 +19,15 @@ import type { Database } from "@/integrations/supabase/types";
 
 type NonAccountingDayInsert = Database["public"]["Tables"]["non_accounting_days"]["Insert"];
 
-export function NonAccountingDayDialog() {
+interface NonAccountingDayDialogProps {
+  currentDate?: Date;
+}
+
+export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccountingDayDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(currentDate.toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(currentDate.toISOString().split('T')[0]);
   const [reason, setReason] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -71,7 +75,7 @@ export function NonAccountingDayDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 mr-2" />
           Lançar Dia Não Contábil
         </Button>
       </DialogTrigger>
@@ -133,4 +137,4 @@ export function NonAccountingDayDialog() {
       </DialogContent>
     </Dialog>
   );
-};
+}

@@ -1,7 +1,11 @@
 import { format, parseISO } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar } from "lucide-react";
+import { Calendar, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface NonAccountingDay {
   id: string;
@@ -15,6 +19,33 @@ interface NonAccountingDaysListProps {
 }
 
 const NonAccountingDaysList = ({ nonAccountingDays }: NonAccountingDaysListProps) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from("non_accounting_days")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Registro excluído com sucesso!",
+        description: "O dia não contábil foi removido.",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["month-data"] });
+    } catch (error) {
+      toast({
+        title: "Erro ao excluir registro",
+        description: "Ocorreu um erro ao excluir o dia não contábil. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="h-[400px] flex flex-col">
       <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
@@ -36,6 +67,14 @@ const NonAccountingDaysList = ({ nonAccountingDays }: NonAccountingDaysListProps
                     {format(parseISO(day.end_date), "dd/MM/yyyy")}
                   </p>
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                  onClick={() => handleDelete(day.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           ))}

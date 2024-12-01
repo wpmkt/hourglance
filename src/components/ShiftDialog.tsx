@@ -12,17 +12,21 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
 type ShiftInsert = Database["public"]["Tables"]["shifts"]["Insert"];
 
-export function ShiftDialog() {
+interface ShiftDialogProps {
+  currentDate?: Date;
+}
+
+export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(currentDate.toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [comment, setComment] = useState("");
@@ -73,7 +77,7 @@ export function ShiftDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 mr-2" />
           Lançar Turno
         </Button>
       </DialogTrigger>
@@ -145,4 +149,4 @@ export function ShiftDialog() {
       </DialogContent>
     </Dialog>
   );
-};
+}

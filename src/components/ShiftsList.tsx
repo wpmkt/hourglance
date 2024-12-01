@@ -1,7 +1,11 @@
 import { format, parseISO } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock } from "lucide-react";
+import { Clock, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Shift {
   id: string;
@@ -16,10 +20,37 @@ interface ShiftsListProps {
 }
 
 const ShiftsList = ({ shifts }: ShiftsListProps) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const calculateHours = (start: string, end: string) => {
     const startDate = new Date(`1970-01-01T${start}`);
     const endDate = new Date(`1970-01-01T${end}`);
     return (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from("shifts")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Turno excluído com sucesso!",
+        description: "O registro foi removido.",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["month-data"] });
+    } catch (error) {
+      toast({
+        title: "Erro ao excluir turno",
+        description: "Ocorreu um erro ao excluir o registro. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -49,11 +80,19 @@ const ShiftsList = ({ shifts }: ShiftsListProps) => {
                     </p>
                   )}
                 </div>
-                <div className="text-right">
+                <div className="flex flex-col items-end gap-2">
                   <p className="font-medium text-neutral-900">
                     {calculateHours(shift.start_time, shift.end_time).toFixed(1)}h
                   </p>
                   <p className="text-sm text-neutral-600">trabalhadas</p>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                    onClick={() => handleDelete(shift.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
