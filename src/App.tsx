@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Month from "./pages/Month";
 import Login from "./pages/Login";
+import Success from "./pages/Success";
+import Cancel from "./pages/Cancel";
 import { useToast } from "./components/ui/use-toast";
 
 const queryClient = new QueryClient({
@@ -137,6 +139,8 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/success" element={<Success />} />
+            <Route path="/cancel" element={<Cancel />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
