@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PlanHeader } from "./PlanHeader";
+import { PlanFeatures } from "./PlanFeatures";
 
 interface PlanCardProps {
   userId: string;
@@ -33,13 +35,9 @@ const CheckoutForm = ({ onClose }: { onClose: () => void }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
+    if (!stripe || !elements) return;
 
     setIsLoading(true);
-
     try {
       const { error } = await stripe.confirmPayment({
         elements,
@@ -103,9 +101,7 @@ export function PlanCard({ userId }: PlanCardProps) {
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase.functions.invoke('get-products');
-      
       if (error) throw error;
-      
       if (data?.products) {
         setProducts(data.products);
       }
@@ -122,23 +118,17 @@ export function PlanCard({ userId }: PlanCardProps) {
   const handleSubscribe = async (priceId: string) => {
     try {
       setIsLoading(true);
-      
       const { data, error } = await supabase.functions.invoke('create-payment-intent', {
-        body: {
-          userId,
-          priceId
-        }
+        body: { userId, priceId }
       });
 
       if (error) throw error;
-
       if (!data?.clientSecret) {
         throw new Error('Client Secret não recebido');
       }
 
       setClientSecret(data.clientSecret);
       setIsPaymentModalOpen(true);
-
     } catch (error) {
       console.error('Erro ao iniciar pagamento:', error);
       toast({
@@ -156,6 +146,15 @@ export function PlanCard({ userId }: PlanCardProps) {
     setClientSecret(null);
   };
 
+  const planFeatures = [
+    "Recursos ilimitados",
+    "Suporte prioritário 24/7",
+    "Relatórios avançados",
+    "Backup automático",
+    "Acesso antecipado a novidades",
+    "Integrações premium"
+  ];
+
   if (products.length === 0) {
     return (
       <Card className="w-full max-w-sm mx-auto">
@@ -170,52 +169,37 @@ export function PlanCard({ userId }: PlanCardProps) {
 
   return (
     <>
-      {products.map((product) => (
-        <Card key={product.id} className="w-full max-w-sm mx-auto mb-6">
-          <CardHeader>
-            <CardTitle>{product.name}</CardTitle>
-            <CardDescription>{product.description}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-2xl font-bold">
-                {new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: product.default_price.currency,
-                }).format(product.default_price.unit_amount / 100)}
-                /mês
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center">
-                  ✓ Recursos ilimitados
-                </li>
-                <li className="flex items-center">
-                  ✓ Suporte prioritário
-                </li>
-                <li className="flex items-center">
-                  ✓ Acesso antecipado a novidades
-                </li>
-              </ul>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              className="w-full" 
-              onClick={() => handleSubscribe(product.default_price.id)}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processando...
-                </>
-              ) : (
-                'Assinar agora'
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {products.map((product) => (
+          <Card key={product.id} className="w-full flex flex-col hover:shadow-lg transition-shadow duration-300">
+            <PlanHeader
+              name={product.name}
+              description={product.description}
+              price={product.default_price.unit_amount}
+              currency={product.default_price.currency}
+            />
+            <CardContent>
+              <PlanFeatures features={planFeatures} />
+            </CardContent>
+            <CardFooter className="mt-auto">
+              <Button 
+                className="w-full" 
+                onClick={() => handleSubscribe(product.default_price.id)}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  'Assinar agora'
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
 
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
