@@ -17,7 +17,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-neutral-50">
-        <Sidebar side="left">
+        <Sidebar side="left" variant="sidebar">
           <SidebarHeader className="flex items-center justify-center h-16 border-b border-neutral-100">
             <Link to="/" className="text-lg font-semibold text-neutral-900">
               NoQap
@@ -51,7 +51,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                       <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent>
+                  <SheetContent side="left">
                     <nav className="flex flex-col gap-4">
                       <Link
                         to="/"
