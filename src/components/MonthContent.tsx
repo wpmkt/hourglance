@@ -10,7 +10,7 @@ import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
-import { Plus } from "lucide-react";
+import { Menu, Search, ArrowLeft } from "lucide-react";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -43,7 +43,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
       if (currentHour >= nightStartHour || currentHour < nightEndHour) {
         nightMinutes += 10;
       }
-      currentDate.setHours(currentDate.getHours() + 1);
+      currentDate.setTime(currentDate.getTime() + 3600000); // Add 1 hour in milliseconds
       currentHour = currentDate.getHours();
     }
 
@@ -51,12 +51,12 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   const fetchMonthData = async () => {
-    const start = startOfMonth(currentDate);
-    const end = endOfMonth(currentDate);
-    const startDate = format(start, "yyyy-MM-dd");
-    const endDate = format(end, "yyyy-MM-dd");
-
     try {
+      const start = startOfMonth(currentDate);
+      const end = endOfMonth(currentDate);
+      const startDate = format(start, "yyyy-MM-dd");
+      const endDate = format(end, "yyyy-MM-dd");
+
       const [shiftsResponse, nonAccountingResponse] = await Promise.all([
         supabase
           .from("shifts")
@@ -158,7 +158,26 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white">
         <div className="max-w-lg mx-auto px-4 py-3">
-          <MonthNavigation currentDate={currentDate} onNavigate={handleNavigate} />
+          <div className="flex items-center justify-between mb-4">
+            <button className="p-2 hover:bg-gray-100 rounded-full">
+              <Menu className="w-6 h-6 text-gray-600" />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-full">
+              <Search className="w-6 h-6 text-gray-600" />
+            </button>
+          </div>
+          <div className="flex items-center gap-3 mb-6">
+            <button 
+              className="p-2 hover:bg-gray-100 rounded-full"
+              onClick={() => handleNavigate("prev")}
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div>
+              <h2 className="text-sm text-gray-500">Bem-vindo de volta</h2>
+              <h1 className="text-xl font-semibold text-gray-900">Banco de Horas</h1>
+            </div>
+          </div>
         </div>
       </div>
 
