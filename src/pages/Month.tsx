@@ -13,7 +13,17 @@ import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 const Month = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const currentDate = id ? parseISO(id) : new Date();
+  
+  // Garantir que temos uma data válida
+  const currentDate = (() => {
+    if (!id) return new Date();
+    try {
+      const parsedDate = parseISO(id);
+      return !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
+    } catch {
+      return new Date();
+    }
+  })();
 
   const fetchMonthData = async () => {
     const start = startOfMonth(currentDate);

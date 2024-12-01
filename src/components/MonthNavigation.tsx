@@ -9,10 +9,15 @@ interface MonthNavigationProps {
 }
 
 const MonthNavigation = ({ currentDate, onNavigate }: MonthNavigationProps) => {
+  // Garantir que currentDate é uma instância válida de Date
+  const date = currentDate instanceof Date && !isNaN(currentDate.getTime()) 
+    ? currentDate 
+    : new Date();
+
   return (
     <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold">
-        {format(currentDate, "MMMM 'de' yyyy", { locale: ptBR })}
+        {format(date, "MMMM 'de' yyyy", { locale: ptBR })}
       </h1>
       <div className="flex gap-2">
         <Button variant="outline" size="icon" onClick={() => onNavigate("prev")}>
