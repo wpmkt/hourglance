@@ -50,13 +50,13 @@ const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
   };
 
   return (
-    <Card className="h-[400px] flex flex-col bg-white">
-      <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
+    <Card className="h-[400px] flex flex-col bg-white overflow-hidden">
+      <div className="p-4 border-b border-neutral-200 flex items-center gap-2 bg-white">
         <Clock className="h-5 w-5 text-[#8B5CF6]" />
         <h3 className="text-lg font-medium text-gray-900">Turnos Registrados</h3>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="p-4 space-y-3">
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-3">
           {shifts?.map((shift) => (
             <ShiftItem
               key={shift.id}

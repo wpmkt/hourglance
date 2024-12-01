@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { Trash2, Clock, Pencil } from "lucide-react";
+import { Trash2, Clock, Pencil, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -35,72 +35,86 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
   };
 
   return (
-    <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex-1">
+    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-purple-100">
+      <div className="flex flex-col space-y-3">
+        {/* Header with date and actions */}
+        <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <p className="font-medium text-gray-900">
+            <div className="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg font-medium">
               {format(parseISO(shift.date), "dd/MM/yyyy")}
-            </p>
-            <div className="flex items-center gap-1 text-sm text-[#8B5CF6] bg-[#8B5CF6]/10 px-2 py-0.5 rounded-lg">
-              <Clock className="w-3 h-3" />
-              {shift.start_time.slice(0, 5)} - {shift.end_time.slice(0, 5)}
             </div>
           </div>
-          {nightMinutes > 0 && (
-            <p className="text-sm text-[#8B5CF6] mt-1">
-              Minutos noturnos: {nightMinutes}min
-            </p>
-          )}
-          {shift.comment && (
-            <p className="text-sm text-gray-500 mt-1">
-              {shift.comment}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-medium text-gray-900">
-            {formatDuration(totalHours)}
-          </p>
-          {onEdit && (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
-              onClick={() => onEdit(shift)}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          )}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
+          <div className="flex items-center gap-2">
+            {onEdit && (
               <Button 
                 variant="ghost" 
                 size="icon"
-                className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                className="text-purple-500 hover:text-purple-700 hover:bg-purple-50"
+                onClick={() => onEdit(shift)}
               >
-                <Trash2 className="h-4 w-4" />
+                <Pencil className="h-4 w-4" />
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white mx-4">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tem certeza que deseja excluir este turno? Esta ação não pode ser desfeita.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="border-gray-200">Cancelar</AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={() => onDelete(shift.id)}
-                  className="bg-red-500 hover:bg-red-600"
+            )}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
                 >
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-white mx-4">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja excluir este turno? Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-gray-200">Cancelar</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={() => onDelete(shift.id)}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
+
+        {/* Time information */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg">
+              <Clock className="h-4 w-4 text-gray-500" />
+              <span className="text-gray-700">
+                {shift.start_time.slice(0, 5)} - {shift.end_time.slice(0, 5)}
+              </span>
+            </div>
+            <div className="text-lg font-semibold text-purple-700">
+              {formatDuration(totalHours)}
+            </div>
+          </div>
+          {nightMinutes > 0 && (
+            <div className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-lg">
+              <Moon className="h-4 w-4 text-indigo-500" />
+              <span className="text-indigo-700 font-medium">
+                {nightMinutes}min
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Comment if exists */}
+        {shift.comment && (
+          <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded-lg">
+            {shift.comment}
+          </div>
+        )}
       </div>
     </div>
   );
