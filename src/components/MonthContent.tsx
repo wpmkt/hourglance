@@ -1,15 +1,14 @@
 import { format, startOfMonth, endOfMonth } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ShiftDialog } from "@/components/ShiftDialog";
 import { NonAccountingDayDialog } from "@/components/NonAccountingDayDialog";
-import MonthlySummary from "@/components/MonthlySummary";
-import ShiftsList from "@/components/ShiftsList";
-import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
-import { ArrowLeft, LogOut } from "lucide-react";
+import MonthHeader from "./month/MonthHeader";
+import MonthActions from "./month/MonthActions";
+import MonthStats from "./month/MonthStats";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -21,7 +20,6 @@ interface MonthContentProps {
 
 const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const calculateNightMinutes = (start: string, end: string) => {
     const startDate = new Date(`1970-01-01T${start}`);
@@ -143,89 +141,28 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     return (160 / 30) * workingDays;
   };
 
-  const handleNavigate = (direction: "prev" | "next") => {
-    const newDate = new Date(currentDate);
-    if (direction === "prev") {
-      newDate.setMonth(newDate.getMonth() - 1);
-    } else {
-      newDate.setMonth(newDate.getMonth() + 1);
-    }
-    navigate(`/month/${format(newDate, "yyyy-MM-dd")}`);
-  };
-
   return (
     <div className="min-h-screen bg-[#8B5CF6]">
       <div className="bg-[#8B5CF6] text-white">
         <div className="max-w-lg mx-auto px-4 py-4">
-          <div className="flex justify-between items-center mb-4">
-            <button 
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Voltar
-            </button>
-            <button 
-              onClick={() => navigate("/login")}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
-            >
-              Sair
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+          <MonthHeader currentDate={currentDate} />
+          
           <h1 className="text-2xl font-semibold mb-6">
-            {format(currentDate, "d 'de' yyyy")}
+            {format(currentDate, "MMMM'/'yyyy", { locale: ptBR })}
           </h1>
-          <div className="space-y-3 mb-6">
-            <button 
-              onClick={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click()}
-              className="w-full bg-white text-[#8B5CF6] py-3 rounded-lg font-medium hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
-            >
-              + Turno
-            </button>
-            <button
-              onClick={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click()}
-              className="w-full bg-white/20 text-white py-3 rounded-lg font-medium hover:bg-white/30 transition-colors flex items-center justify-center gap-2"
-            >
-              + Dia Não Contábil
-            </button>
-          </div>
-          <div className="bg-white/20 rounded-lg p-4 mb-6">
-            <h2 className="text-lg font-medium mb-4">Dias do Mês</h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span>Dias Previstos</span>
-                <span className="font-medium">{endOfMonth(currentDate).getDate()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Dias Não Contábeis</span>
-                <span className="font-medium">{safeData.nonAccountingDays.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Dias a Trabalhar</span>
-                <span className="font-medium text-[#D6BCFA]">{calculateWorkingDays()}</span>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/20 rounded-lg p-4">
-            <h2 className="text-lg font-medium mb-4">Horas do Mês</h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span>Horas Previstas</span>
-                <span className="font-medium">{calculateExpectedHours().toFixed(1)}h</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Horas Trabalhadas</span>
-                <span className="font-medium">{calculateWorkedHours().toFixed(1)}h</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Saldo</span>
-                <span className="font-medium text-[#D6BCFA]">
-                  {(calculateWorkedHours() - calculateExpectedHours()).toFixed(1)}h
-                </span>
-              </div>
-            </div>
-          </div>
+
+          <MonthActions 
+            onOpenShiftDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click()}
+            onOpenNonAccountingDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click()}
+          />
+
+          <MonthStats 
+            daysInMonth={endOfMonth(currentDate).getDate()}
+            nonAccountingDays={safeData.nonAccountingDays.length}
+            workingDays={calculateWorkingDays()}
+            expectedHours={calculateExpectedHours()}
+            workedHours={calculateWorkedHours()}
+          />
         </div>
       </div>
       <div className="hidden">
