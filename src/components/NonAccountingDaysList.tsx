@@ -48,21 +48,19 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
       }
 
       console.log('Enviando requisição de exclusão para o Supabase...');
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("non_accounting_days")
         .delete()
-        .eq("id", id)
-        .eq("user_id", user.id)
-        .select();
+        .eq('id', id);
 
-      console.log('Resposta do Supabase:', { data, error });
+      console.log('Resposta da exclusão:', { error });
 
       if (error) {
         console.error('Erro ao excluir dia não contábil:', error);
         throw error;
       }
 
-      console.log('Dia não contábil excluído com sucesso:', data);
+      console.log('Dia não contábil excluído com sucesso');
 
       toast({
         title: "Registro excluído com sucesso!",

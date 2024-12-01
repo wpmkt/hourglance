@@ -58,7 +58,7 @@ const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
       const { error } = await supabase
         .from("shifts")
         .delete()
-        .match({ id: id, user_id: user.id });
+        .eq('id', id);
 
       console.log('Resposta da exclusão:', { error });
 
