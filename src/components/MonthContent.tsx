@@ -142,15 +142,11 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#8B5CF6]">
-      <div className="bg-[#8B5CF6] text-white">
+    <div className="min-h-screen bg-[#9b87f5]">
+      <div className="bg-[#9b87f5] text-white">
         <div className="max-w-lg mx-auto px-4 py-4">
           <MonthHeader currentDate={currentDate} />
           
-          <h1 className="text-2xl font-semibold mb-6">
-            {format(currentDate, "MMMM'/'yyyy", { locale: ptBR })}
-          </h1>
-
           <MonthActions 
             onOpenShiftDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click()}
             onOpenNonAccountingDialog={() => document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click()}

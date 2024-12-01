@@ -74,10 +74,9 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex-1 bg-white text-[#8B5CF6] border-[#8B5CF6] py-4 rounded-2xl font-medium hover:bg-[#8B5CF6] hover:text-white transition-colors">
-          <Plus className="w-4 h-4 mr-2" />
+        <button data-dialog-trigger="non-accounting" className="hidden">
           Não Contábil
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
@@ -95,7 +94,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               <Input
                 id="startDate"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
@@ -108,7 +107,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               <Input
                 id="endDate"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
@@ -120,7 +119,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               </Label>
               <Input
                 id="reason"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-[#9b87f5] focus:ring-[#9b87f5]"
                 placeholder="Ex: Férias, Licença"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -132,7 +131,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl py-3"
+              className="w-full bg-[#9b87f5] hover:bg-[#8B5CF6] text-white rounded-xl py-3"
             >
               {loading ? "Salvando..." : "Salvar"}
             </Button>

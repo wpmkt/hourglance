@@ -68,7 +68,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-[#8B5CF6]">
+    <div className="min-h-screen bg-[#9b87f5]">
       {/* Mobile Navigation */}
       <div className="lg:hidden">
         <div className="flex items-center justify-between px-4 py-4">
@@ -78,14 +78,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-[#8B5CF6] border-none">
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-[#9b87f5] border-none">
               <nav className="flex flex-col gap-2 mt-6">
                 <NavLinks />
               </nav>
             </SheetContent>
           </Sheet>
           <span className="text-xl font-bold text-white">
-            TimeBank
+            Controle de Horas
           </span>
           <button
             onClick={handleLogout}
@@ -101,11 +101,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Desktop Layout */}
       <div className="hidden lg:flex">
-        <aside className="w-64 fixed h-screen bg-[#8B5CF6] border-r border-white/10">
+        <aside className="w-64 fixed h-screen bg-[#9b87f5] border-r border-white/10">
           <div className="flex flex-col h-full">
             <div className="p-6">
               <span className="text-2xl font-bold text-white">
-                TimeBank
+                Controle de Horas
               </span>
             </div>
             <nav className="flex-1 px-4 space-y-2">
