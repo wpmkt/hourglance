@@ -17,7 +17,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-neutral-50">
-        <Sidebar>
+        <Sidebar side="left">
           <SidebarHeader className="flex items-center justify-center h-16 border-b border-neutral-100">
             <Link to="/" className="text-lg font-semibold text-neutral-900">
               NoQap

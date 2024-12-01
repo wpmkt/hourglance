@@ -101,50 +101,50 @@ export function NonAccountingDayDialog({ currentDate = new Date(), editData }: N
           Não Contábil
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
+      <DialogContent className="w-[95%] max-w-[400px] mx-auto bg-white p-4 sm:p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
-          <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-semibold text-neutral-900">
+          <DialogHeader className="mb-4 sm:mb-6">
+            <DialogTitle className="text-xl sm:text-2xl font-semibold text-neutral-900">
               {editData ? "Editar Dia Não Contábil" : "Lançar Dia Não Contábil"}
             </DialogTitle>
-            <DialogDescription className="text-neutral-500 mt-2">
+            <DialogDescription className="text-sm text-neutral-500 mt-1 sm:mt-2">
               {editData ? "Atualize as informações do registro." : "Registre períodos de férias, licenças ou outros dias não contábeis."}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="startDate" className="text-right text-neutral-700">
+          <div className="grid gap-4 sm:gap-6">
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <Label htmlFor="startDate" className="text-right text-neutral-700 text-sm">
                 Data Inicial
               </Label>
               <Input
                 id="startDate"
                 type="date"
-                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400 text-sm"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="endDate" className="text-right text-neutral-700">
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <Label htmlFor="endDate" className="text-right text-neutral-700 text-sm">
                 Data Final
               </Label>
               <Input
                 id="endDate"
                 type="date"
-                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400 text-sm"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="reason" className="text-right text-neutral-700">
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <Label htmlFor="reason" className="text-right text-neutral-700 text-sm">
                 Motivo
               </Label>
               <Input
                 id="reason"
-                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400"
+                className="col-span-3 rounded-xl border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400 text-sm"
                 placeholder="Ex: Férias, Licença"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -152,11 +152,11 @@ export function NonAccountingDayDialog({ currentDate = new Date(), editData }: N
               />
             </div>
           </div>
-          <DialogFooter className="mt-8">
+          <DialogFooter className="mt-6 sm:mt-8">
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl py-3"
+              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl py-2.5 text-sm"
             >
               {loading ? "Salvando..." : (editData ? "Atualizar" : "Salvar")}
             </Button>
