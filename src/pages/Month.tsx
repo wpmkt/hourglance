@@ -90,7 +90,13 @@ const Month = () => {
     
     if (errorMessage === "Usuário não autenticado") {
       navigate("/login");
-      return null;
+      return (
+        <Layout>
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-lg">Redirecionando para o login...</div>
+          </div>
+        </Layout>
+      );
     }
 
     toast({
@@ -147,6 +153,12 @@ const Month = () => {
     );
   }
 
+  // Garantir que data existe, mesmo que vazio
+  const safeData = {
+    shifts: data?.shifts || [],
+    nonAccountingDays: data?.nonAccountingDays || []
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -154,7 +166,7 @@ const Month = () => {
 
         <MonthlySummary
           daysInMonth={endOfMonth(currentDate).getDate()}
-          nonAccountingDays={data?.nonAccountingDays?.length || 0}
+          nonAccountingDays={safeData.nonAccountingDays.length}
           workingDays={calculateWorkingDays()}
           expectedHours={calculateExpectedHours()}
           workedHours={calculateWorkedHours()}
@@ -166,8 +178,8 @@ const Month = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <NonAccountingDaysList nonAccountingDays={data?.nonAccountingDays || []} />
-          <ShiftsList shifts={data?.shifts || []} />
+          <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
+          <ShiftsList shifts={safeData.shifts} />
         </div>
       </div>
     </Layout>
