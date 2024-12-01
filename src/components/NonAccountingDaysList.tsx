@@ -35,44 +35,25 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
   const queryClient = useQueryClient();
 
   const handleDelete = async (id: string) => {
-    console.log('Iniciando processo de exclusão do dia não contábil:', id);
-    
     try {
-      console.log('Obtendo usuário atual...');
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('Usuário atual:', user);
-
-      if (!user) {
-        console.error('Usuário não autenticado');
-        throw new Error("Usuário não autenticado");
-      }
-
-      console.log('Enviando requisição de exclusão para o Supabase...');
       const { error } = await supabase
-        .from("non_accounting_days")
+        .from('non_accounting_days')
         .delete()
         .eq('id', id);
-
-      console.log('Resposta da exclusão:', { error });
 
       if (error) {
         console.error('Erro ao excluir dia não contábil:', error);
         throw error;
       }
 
-      console.log('Dia não contábil excluído com sucesso');
-
       toast({
         title: "Registro excluído com sucesso!",
         description: "O dia não contábil foi removido.",
       });
 
-      console.log('Invalidando queries...');
       await queryClient.invalidateQueries({ queryKey: ["month-data"] });
-      console.log('Queries invalidadas com sucesso');
-
     } catch (error) {
-      console.error('Erro capturado no handleDelete:', error);
+      console.error('Erro ao excluir dia não contábil:', error);
       toast({
         title: "Erro ao excluir registro",
         description: "Ocorreu um erro ao excluir o dia não contábil. Tente novamente.",
@@ -108,10 +89,7 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
                       variant="ghost" 
                       size="icon"
                       className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
-                      onClick={() => {
-                        console.log('Iniciando edição do dia não contábil:', day);
-                        onEdit(day);
-                      }}
+                      onClick={() => onEdit(day)}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -136,10 +114,7 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction 
-                          onClick={() => {
-                            console.log('Confirmação de exclusão para o dia não contábil:', day.id);
-                            handleDelete(day.id);
-                          }}
+                          onClick={() => handleDelete(day.id)}
                           className="bg-red-500 hover:bg-red-600"
                         >
                           Excluir
