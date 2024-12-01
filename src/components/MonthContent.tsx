@@ -11,6 +11,7 @@ import MonthActionButtons from "./month/MonthActionButtons";
 import MonthStats from "./month/MonthStats";
 import ShiftsList from "./ShiftsList";
 import NonAccountingDaysList from "./NonAccountingDaysList";
+import { calculateWorkingDays, calculateExpectedHours } from "@/utils/calculations";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -24,32 +25,6 @@ interface MonthContentProps {
 
 const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const { toast } = useToast();
-
-  const calculateNightMinutes = (start: string, end: string) => {
-    const startDate = new Date(`1970-01-01T${start}`);
-    let endDate = new Date(`1970-01-01T${end}`);
-    
-    if (endDate < startDate) {
-      endDate.setDate(endDate.getDate() + 1);
-    }
-
-    const nightStartHour = 23;
-    const nightEndHour = 5;
-
-    let nightMinutes = 0;
-    let currentHour = startDate.getHours();
-    let currentDate = new Date(startDate);
-
-    while (currentDate < endDate) {
-      if (currentHour >= nightStartHour || currentHour < nightEndHour) {
-        nightMinutes += 10;
-      }
-      currentDate.setTime(currentDate.getTime() + 3600000);
-      currentHour = currentDate.getHours();
-    }
-
-    return nightMinutes;
-  };
 
   const fetchMonthData = async () => {
     try {
@@ -121,14 +96,17 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     nonAccountingDays: data?.nonAccountingDays || []
   };
 
-  const calculateWorkingDays = () => {
-    if (!currentDate || !(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
-      return 0;
-    }
-    const daysInMonth = endOfMonth(currentDate).getDate();
-    const nonAccountingDays = safeData.nonAccountingDays.length;
-    return daysInMonth - nonAccountingDays;
+  const calculateNonAccountingDays = () => {
+    return safeData.nonAccountingDays.reduce((acc, day) => {
+      const start = new Date(day.start_date);
+      const end = new Date(day.end_date);
+      return acc + (end.getDate() - start.getDate() + 1);
+    }, 0);
   };
+
+  const nonAccountingDays = calculateNonAccountingDays();
+  const workingDays = calculateWorkingDays(currentDate, nonAccountingDays);
+  const expectedHours = calculateExpectedHours(currentDate, workingDays);
 
   const calculateWorkedHours = () => {
     return safeData.shifts.reduce((acc, shift) => {
@@ -147,10 +125,7 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     }, 0);
   };
 
-  const calculateExpectedHours = () => {
-    const workingDays = calculateWorkingDays();
-    return (160 / 30) * workingDays;
-  };
+  const workedHours = calculateWorkedHours();
 
   const handleEditShift = (shift: Shift) => {
     const dialogTrigger = document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]');
@@ -185,16 +160,11 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     
     // Resumo
     doc.setFontSize(12);
-    const workingDays = calculateWorkingDays();
-    const workedHours = calculateWorkedHours();
-    const expectedHours = calculateExpectedHours();
-    const balance = workedHours - expectedHours;
-    
     doc.text([
       `Dias úteis: ${workingDays}`,
       `Horas esperadas: ${expectedHours.toFixed(1)}h`,
       `Horas trabalhadas: ${workedHours.toFixed(1)}h`,
-      `Saldo: ${balance.toFixed(1)}h`,
+      `Saldo: ${(workedHours - expectedHours).toFixed(1)}h`,
     ], 14, 40);
 
     // Tabela de turnos
@@ -258,10 +228,10 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
 
           <MonthStats 
             daysInMonth={endOfMonth(currentDate).getDate()}
-            nonAccountingDays={safeData.nonAccountingDays.length}
-            workingDays={calculateWorkingDays()}
-            expectedHours={calculateExpectedHours()}
-            workedHours={calculateWorkedHours()}
+            nonAccountingDays={nonAccountingDays}
+            workingDays={workingDays}
+            expectedHours={expectedHours}
+            workedHours={workedHours}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">

@@ -139,8 +139,13 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <Tabs defaultValue={selectedQuarter} value={selectedQuarter} onValueChange={setSelectedQuarter} className="w-full col-span-1 md:col-span-2">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-8 bg-neutral-100 p-1 rounded-xl">
+          <Tabs 
+            defaultValue={selectedQuarter} 
+            value={selectedQuarter} 
+            onValueChange={setSelectedQuarter} 
+            className="w-full col-span-1 md:col-span-2"
+          >
+            <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full mb-8 bg-neutral-100 p-1 rounded-xl">
               {quarters.map((quarter) => (
                 <TabsTrigger 
                   key={quarter.id} 
@@ -165,7 +170,7 @@ const Index = () => {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="bg-neutral-50 p-4 rounded-xl">
                         <p className="text-sm text-neutral-500 mb-1">Horas previstas</p>
                         <p className="text-xl font-bold text-neutral-900">{quarter.stats.planned}h</p>
@@ -192,7 +197,7 @@ const Index = () => {
 
         <div className="mt-12">
           <h2 className="text-lg font-semibold text-neutral-900 mb-6">Meses</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {months.map((month, index) => (
               <Link
                 key={month}
