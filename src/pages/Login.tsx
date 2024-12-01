@@ -3,12 +3,13 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -17,13 +18,18 @@ const Login = () => {
         if (session) {
           navigate("/", { replace: true });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erro ao verificar sessão:", error);
-        toast({
-          variant: "destructive",
-          title: "Erro ao verificar sessão",
-          description: "Por favor, tente novamente."
-        });
+        
+        if (error.message?.includes('email_provider_disabled')) {
+          setAuthError("O login por email está temporariamente desabilitado. Por favor, contate o administrador.");
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Erro ao verificar sessão",
+            description: "Por favor, tente novamente."
+          });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -55,42 +61,48 @@ const Login = () => {
       <div className="w-full max-w-md">
         <div className="bg-white p-8 rounded-lg shadow-sm border border-neutral-200">
           <h1 className="text-2xl font-bold text-center mb-8 text-primary">TimeBank</h1>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ 
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#0891b2',
-                    brandAccent: '#0e7490'
+          {authError ? (
+            <div className="p-4 mb-4 text-sm text-red-800 bg-red-50 rounded-lg">
+              {authError}
+            </div>
+          ) : (
+            <Auth
+              supabaseClient={supabase}
+              appearance={{ 
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: '#0891b2',
+                      brandAccent: '#0e7490'
+                    }
                   }
                 }
-              }
-            }}
-            theme="light"
-            providers={[]}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: 'Email',
-                  password_label: 'Senha',
-                  button_label: 'Entrar',
-                  loading_button_label: 'Entrando...',
-                  social_provider_text: 'Entrar com {{provider}}',
-                  link_text: 'Já tem uma conta? Entre'
-                },
-                sign_up: {
-                  email_label: 'Email',
-                  password_label: 'Senha',
-                  button_label: 'Criar conta',
-                  loading_button_label: 'Criando conta...',
-                  social_provider_text: 'Criar conta com {{provider}}',
-                  link_text: 'Não tem uma conta? Cadastre-se'
+              }}
+              theme="light"
+              providers={[]}
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: 'Email',
+                    password_label: 'Senha',
+                    button_label: 'Entrar',
+                    loading_button_label: 'Entrando...',
+                    social_provider_text: 'Entrar com {{provider}}',
+                    link_text: 'Já tem uma conta? Entre'
+                  },
+                  sign_up: {
+                    email_label: 'Email',
+                    password_label: 'Senha',
+                    button_label: 'Criar conta',
+                    loading_button_label: 'Criando conta...',
+                    social_provider_text: 'Criar conta com {{provider}}',
+                    link_text: 'Não tem uma conta? Cadastre-se'
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
