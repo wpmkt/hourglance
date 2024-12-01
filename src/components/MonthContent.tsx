@@ -1,4 +1,4 @@
-import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ShiftDialog } from "@/components/ShiftDialog";
@@ -8,15 +8,16 @@ import MonthlySummary from "@/components/MonthlySummary";
 import ShiftsList from "@/components/ShiftsList";
 import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface MonthContentProps {
   currentDate: Date;
   userId: string;
-  onNavigate: (direction: "prev" | "next") => void;
 }
 
-const MonthContent = ({ currentDate, userId, onNavigate }: MonthContentProps) => {
+const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchMonthData = async () => {
     const start = startOfMonth(currentDate);
@@ -25,33 +26,35 @@ const MonthContent = ({ currentDate, userId, onNavigate }: MonthContentProps) =>
     const startDate = format(start, "yyyy-MM-dd");
     const endDate = format(end, "yyyy-MM-dd");
 
-    const { data: shifts, error: shiftsError } = await supabase
-      .from("shifts")
-      .select("*")
-      .gte("date", startDate)
-      .lte("date", endDate)
-      .order("date", { ascending: true });
+    const [shiftsResponse, nonAccountingResponse] = await Promise.all([
+      supabase
+        .from("shifts")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("date", startDate)
+        .lte("date", endDate)
+        .order("date", { ascending: true }),
+      supabase
+        .from("non_accounting_days")
+        .select("*")
+        .eq("user_id", userId)
+        .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
+        .order("start_date", { ascending: true })
+    ]);
 
-    if (shiftsError) throw shiftsError;
-
-    const { data: nonAccountingDays, error: nonAccountingError } = await supabase
-      .from("non_accounting_days")
-      .select("*")
-      .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
-      .order("start_date", { ascending: true });
-
-    if (nonAccountingError) throw nonAccountingError;
+    if (shiftsResponse.error) throw shiftsResponse.error;
+    if (nonAccountingResponse.error) throw nonAccountingResponse.error;
 
     return {
-      shifts: shifts || [],
-      nonAccountingDays: nonAccountingDays || []
+      shifts: shiftsResponse.data || [],
+      nonAccountingDays: nonAccountingResponse.data || []
     };
   };
 
-  const { data, error } = useQuery({
+  const { data, error, isLoading } = useQuery({
     queryKey: ["month-data", format(currentDate, "yyyy-MM"), userId],
     queryFn: fetchMonthData,
-    retry: 1,
+    enabled: !!userId,
   });
 
   if (error) {
@@ -63,21 +66,27 @@ const MonthContent = ({ currentDate, userId, onNavigate }: MonthContentProps) =>
     });
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-lg">Carregando dados...</div>
+      </div>
+    );
+  }
+
+  const safeData = {
+    shifts: data?.shifts || [],
+    nonAccountingDays: data?.nonAccountingDays || []
+  };
+
   const calculateWorkingDays = () => {
-    if (!data) return 0;
     const daysInMonth = endOfMonth(currentDate).getDate();
-    const nonAccountingDays = data.nonAccountingDays?.reduce((acc, day) => {
-      const start = parseISO(day.start_date);
-      const end = parseISO(day.end_date);
-      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      return acc + days;
-    }, 0) || 0;
+    const nonAccountingDays = safeData.nonAccountingDays.length;
     return daysInMonth - nonAccountingDays;
   };
 
   const calculateWorkedHours = () => {
-    if (!data?.shifts) return 0;
-    return data.shifts.reduce((acc, shift) => {
+    return safeData.shifts.reduce((acc, shift) => {
       const start = new Date(`1970-01-01T${shift.start_time}`);
       const end = new Date(`1970-01-01T${shift.end_time}`);
       const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
@@ -90,14 +99,19 @@ const MonthContent = ({ currentDate, userId, onNavigate }: MonthContentProps) =>
     return (160 / 30) * workingDays;
   };
 
-  const safeData = {
-    shifts: data?.shifts || [],
-    nonAccountingDays: data?.nonAccountingDays || []
+  const handleNavigate = (direction: "prev" | "next") => {
+    const newDate = new Date(currentDate);
+    if (direction === "prev") {
+      newDate.setMonth(newDate.getMonth() - 1);
+    } else {
+      newDate.setMonth(newDate.getMonth() + 1);
+    }
+    navigate(`/month/${format(newDate, "yyyy-MM-dd")}`);
   };
 
   return (
     <div className="space-y-6">
-      <MonthNavigation currentDate={currentDate} onNavigate={onNavigate} />
+      <MonthNavigation currentDate={currentDate} onNavigate={handleNavigate} />
 
       <MonthlySummary
         daysInMonth={endOfMonth(currentDate).getDate()}
