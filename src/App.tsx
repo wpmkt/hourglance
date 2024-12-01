@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
 import Subscription from "./pages/Subscription";
+import Account from "./pages/Account";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +53,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <div>Em breve</div>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <Account />
                 </ProtectedRoute>
               }
             />
