@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Database } from "@/integrations/supabase/types";
@@ -21,16 +20,30 @@ type NonAccountingDayInsert = Database["public"]["Tables"]["non_accounting_days"
 
 interface NonAccountingDayDialogProps {
   currentDate?: Date;
+  editData?: {
+    id: string;
+    start_date: string;
+    end_date: string;
+    reason: string;
+  };
 }
 
-export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccountingDayDialogProps) {
+export function NonAccountingDayDialog({ currentDate = new Date(), editData }: NonAccountingDayDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [startDate, setStartDate] = useState(currentDate.toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(currentDate.toISOString().split('T')[0]);
-  const [reason, setReason] = useState("");
+  const [startDate, setStartDate] = useState(editData?.start_date || currentDate.toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(editData?.end_date || currentDate.toISOString().split('T')[0]);
+  const [reason, setReason] = useState(editData?.reason || "");
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (editData) {
+      setStartDate(editData.start_date);
+      setEndDate(editData.end_date);
+      setReason(editData.reason);
+    }
+  }, [editData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,30 +53,39 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const newNonAccountingDay: NonAccountingDayInsert = {
+      const dayData = {
         start_date: startDate,
         end_date: endDate,
         reason,
         user_id: user.id
       };
 
-      const { error } = await supabase
-        .from("non_accounting_days")
-        .insert(newNonAccountingDay);
+      let error;
+
+      if (editData?.id) {
+        ({ error } = await supabase
+          .from("non_accounting_days")
+          .update(dayData)
+          .eq('id', editData.id));
+      } else {
+        ({ error } = await supabase
+          .from("non_accounting_days")
+          .insert(dayData));
+      }
 
       if (error) throw error;
 
       toast({
-        title: "Dia não contábil registrado com sucesso!",
-        description: "O registro foi salvo e já está disponível para consulta.",
+        title: editData ? "Dia não contábil atualizado com sucesso!" : "Dia não contábil registrado com sucesso!",
+        description: editData ? "As alterações foram salvas." : "O registro foi salvo e já está disponível para consulta.",
       });
 
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["month-data"] });
     } catch (error) {
-      console.error('Erro ao registrar dia não contábil:', error);
+      console.error('Erro ao salvar dia não contábil:', error);
       toast({
-        title: "Erro ao registrar dia não contábil",
+        title: "Erro ao salvar registro",
         description: "Ocorreu um erro ao salvar o registro. Tente novamente.",
         variant: "destructive",
       });
@@ -82,9 +104,11 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
       <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-semibold text-gray-900">Lançar Dia Não Contábil</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold text-gray-900">
+              {editData ? "Editar Dia Não Contábil" : "Lançar Dia Não Contábil"}
+            </DialogTitle>
             <DialogDescription className="text-gray-500 mt-2">
-              Registre períodos de férias, licenças ou outros dias não contábeis.
+              {editData ? "Atualize as informações do registro." : "Registre períodos de férias, licenças ou outros dias não contábeis."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6">
@@ -134,7 +158,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               disabled={loading}
               className="w-full bg-[#9b87f5] hover:bg-[#8B5CF6] text-white rounded-xl py-3"
             >
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "Salvando..." : (editData ? "Atualizar" : "Salvar")}
             </Button>
           </DialogFooter>
         </form>

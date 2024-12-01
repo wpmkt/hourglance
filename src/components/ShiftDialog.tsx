@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Database } from "@/integrations/supabase/types";
@@ -21,17 +20,33 @@ type ShiftInsert = Database["public"]["Tables"]["shifts"]["Insert"];
 
 interface ShiftDialogProps {
   currentDate?: Date;
+  editData?: {
+    id: string;
+    date: string;
+    start_time: string;
+    end_time: string;
+    comment?: string;
+  };
 }
 
-export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
+export function ShiftDialog({ currentDate = new Date(), editData }: ShiftDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState(currentDate.toISOString().split('T')[0]);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [comment, setComment] = useState("");
+  const [date, setDate] = useState(editData?.date || currentDate.toISOString().split('T')[0]);
+  const [startTime, setStartTime] = useState(editData?.start_time?.slice(0, 5) || "");
+  const [endTime, setEndTime] = useState(editData?.end_time?.slice(0, 5) || "");
+  const [comment, setComment] = useState(editData?.comment || "");
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (editData) {
+      setDate(editData.date);
+      setStartTime(editData.start_time.slice(0, 5));
+      setEndTime(editData.end_time.slice(0, 5));
+      setComment(editData.comment || "");
+    }
+  }, [editData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +56,7 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const newShift: ShiftInsert = {
+      const shiftData = {
         date,
         start_time: startTime,
         end_time: endTime,
@@ -49,23 +64,32 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
         user_id: user.id
       };
 
-      const { error } = await supabase
-        .from("shifts")
-        .insert(newShift);
+      let error;
+
+      if (editData?.id) {
+        ({ error } = await supabase
+          .from("shifts")
+          .update(shiftData)
+          .eq('id', editData.id));
+      } else {
+        ({ error } = await supabase
+          .from("shifts")
+          .insert(shiftData));
+      }
 
       if (error) throw error;
 
       toast({
-        title: "Turno registrado com sucesso!",
-        description: "O turno foi salvo e já está disponível para consulta.",
+        title: editData ? "Turno atualizado com sucesso!" : "Turno registrado com sucesso!",
+        description: editData ? "As alterações foram salvas." : "O turno foi salvo e já está disponível para consulta.",
       });
 
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["month-data"] });
     } catch (error) {
-      console.error('Erro ao registrar turno:', error);
+      console.error('Erro ao salvar turno:', error);
       toast({
-        title: "Erro ao registrar turno",
+        title: "Erro ao salvar turno",
         description: "Ocorreu um erro ao salvar o turno. Tente novamente.",
         variant: "destructive",
       });
@@ -84,9 +108,11 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
       <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-semibold text-gray-900">Lançar Turno</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold text-gray-900">
+              {editData ? "Editar Turno" : "Lançar Turno"}
+            </DialogTitle>
             <DialogDescription className="text-gray-500 mt-2">
-              Registre as horas trabalhadas no dia.
+              {editData ? "Atualize as informações do turno." : "Registre as horas trabalhadas no dia."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6">
@@ -148,7 +174,7 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
               disabled={loading}
               className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl py-3"
             >
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "Salvando..." : (editData ? "Atualizar" : "Salvar")}
             </Button>
           </DialogFooter>
         </form>
