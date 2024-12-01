@@ -35,17 +35,17 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-purple-100">
+    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-indigo-100">
       <div className="flex flex-col space-y-3">
         <div className="flex justify-between items-center">
-          <div className="bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg font-medium">
+          <div className="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg font-medium">
             {format(parseISO(shift.date), "dd/MM/yyyy")}
           </div>
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-purple-500 hover:text-purple-700 hover:bg-purple-50 h-8 w-8"
+              className="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 h-8 w-8"
               onClick={() => onEdit(shift)}
             >
               <Pencil className="h-4 w-4" />
@@ -96,7 +96,7 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftI
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="text-lg font-semibold text-purple-700">
+            <div className="text-lg font-semibold text-indigo-700">
               {formatDuration(totalHours)}
             </div>
             

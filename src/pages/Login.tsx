@@ -17,10 +17,10 @@ const Login = () => {
   }, [session, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50 p-4">
       <Card className="w-full max-w-md p-8 space-y-8 bg-white/80 backdrop-blur-sm shadow-xl">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 text-transparent bg-clip-text">
             TimeBank
           </h1>
           <p className="text-neutral-500">
@@ -35,14 +35,14 @@ const Login = () => {
             variables: {
               default: {
                 colors: {
-                  brand: '#3b82f6',
-                  brandAccent: '#2563eb',
+                  brand: '#4f46e5',
+                  brandAccent: '#4338ca',
                 }
               }
             },
             className: {
-              button: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
-              input: 'rounded-lg border-neutral-200 focus:border-blue-500 focus:ring-blue-500',
+              button: 'bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700',
+              input: 'rounded-lg border-neutral-200 focus:border-indigo-500 focus:ring-indigo-500',
             }
           }}
           localization={{

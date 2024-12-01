@@ -10,7 +10,7 @@ const MonthActions = ({ onOpenShiftDialog, onOpenNonAccountingDialog }: MonthAct
     <div className="space-y-3 mb-6">
       <button 
         onClick={onOpenShiftDialog}
-        className="w-full bg-white text-[#9b87f5] py-3 rounded-lg font-medium hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
+        className="w-full bg-white text-indigo-600 py-3 rounded-lg font-medium hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
       >
         + Turno
       </button>
