@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { Trash2, Clock } from "lucide-react";
+import { Trash2, Clock, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -24,9 +24,10 @@ interface ShiftItemProps {
   nightMinutes: number;
   totalHours: number;
   onDelete: (id: string) => void;
+  onEdit?: (shift: any) => void;
 }
 
-const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete }: ShiftItemProps) => {
+const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete, onEdit }: ShiftItemProps) => {
   const formatDuration = (hours: number) => {
     const wholeHours = Math.floor(hours);
     const minutes = Math.round((hours - wholeHours) * 60);
@@ -34,7 +35,7 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete }: ShiftItemProps
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
+    <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2">
@@ -61,17 +62,27 @@ const ShiftItem = ({ shift, nightMinutes, totalHours, onDelete }: ShiftItemProps
           <p className="text-sm font-medium text-gray-900">
             {formatDuration(totalHours)}
           </p>
+          {onEdit && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+              onClick={() => onEdit(shift)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
                 variant="ghost" 
                 size="icon"
-                className="text-gray-400 hover:text-red-500 hover:bg-red-50"
+                className="text-red-500 hover:text-red-700 hover:bg-red-100"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white">
+            <AlertDialogContent className="bg-white mx-4">
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                 <AlertDialogDescription>

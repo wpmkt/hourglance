@@ -17,9 +17,10 @@ interface Shift {
 
 interface ShiftsListProps {
   shifts: Shift[];
+  onEdit?: (shift: Shift) => void;
 }
 
-const ShiftsList = ({ shifts }: ShiftsListProps) => {
+const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -49,12 +50,12 @@ const ShiftsList = ({ shifts }: ShiftsListProps) => {
   };
 
   return (
-    <Card className="bg-white">
+    <Card className="h-[400px] flex flex-col bg-white">
       <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
         <Clock className="h-5 w-5 text-[#8B5CF6]" />
         <h3 className="text-lg font-medium text-gray-900">Turnos Registrados</h3>
       </div>
-      <ScrollArea className="h-[400px]">
+      <ScrollArea className="flex-1">
         <div className="p-4 space-y-3">
           {shifts?.map((shift) => (
             <ShiftItem
@@ -63,6 +64,7 @@ const ShiftsList = ({ shifts }: ShiftsListProps) => {
               nightMinutes={calculateNightMinutes(shift.start_time, shift.end_time)}
               totalHours={calculateTotalHours(shift.start_time, shift.end_time)}
               onDelete={handleDelete}
+              onEdit={onEdit}
             />
           ))}
           {(!shifts || shifts.length === 0) && (

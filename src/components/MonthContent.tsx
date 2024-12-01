@@ -148,6 +148,16 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     return (160 / 30) * workingDays;
   };
 
+  const handleEditShift = (shift: Shift) => {
+    document.querySelector<HTMLButtonElement>('[data-dialog-trigger="shift"]')?.click();
+    // You'll need to implement the logic to populate the form with the shift data
+  };
+
+  const handleEditNonAccountingDay = (day: NonAccountingDay) => {
+    document.querySelector<HTMLButtonElement>('[data-dialog-trigger="non-accounting"]')?.click();
+    // You'll need to implement the logic to populate the form with the non-accounting day data
+  };
+
   return (
     <div className="min-h-screen bg-[#9b87f5]">
       <div className="bg-[#9b87f5] text-white">
@@ -168,9 +178,13 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <ShiftsList shifts={safeData.shifts} />
+            <ShiftsList 
+              shifts={safeData.shifts}
+              onEdit={handleEditShift}
+            />
             <NonAccountingDaysList 
               nonAccountingDays={safeData.nonAccountingDays}
+              onEdit={handleEditNonAccountingDay}
             />
           </div>
         </div>
