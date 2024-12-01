@@ -24,35 +24,47 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   const navigate = useNavigate();
 
   const fetchMonthData = async () => {
+    // Garantir que estamos usando o primeiro e último dia do mês corretamente
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
 
+    // Formatar as datas no formato esperado pelo Supabase (YYYY-MM-DD)
     const startDate = format(start, "yyyy-MM-dd");
     const endDate = format(end, "yyyy-MM-dd");
 
-    const [shiftsResponse, nonAccountingResponse] = await Promise.all([
-      supabase
-        .from("shifts")
-        .select("*")
-        .eq("user_id", userId)
-        .gte("date", startDate)
-        .lte("date", endDate)
-        .order("date", { ascending: true }),
-      supabase
-        .from("non_accounting_days")
-        .select("*")
-        .eq("user_id", userId)
-        .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
-        .order("start_date", { ascending: true })
-    ]);
+    console.log('Buscando dados para o período:', { startDate, endDate, userId });
 
-    if (shiftsResponse.error) throw shiftsResponse.error;
-    if (nonAccountingResponse.error) throw nonAccountingResponse.error;
+    try {
+      const [shiftsResponse, nonAccountingResponse] = await Promise.all([
+        supabase
+          .from("shifts")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("date", startDate)
+          .lte("date", endDate)
+          .order("date", { ascending: true }),
+        supabase
+          .from("non_accounting_days")
+          .select("*")
+          .eq("user_id", userId)
+          .or(`start_date.lte.${endDate},end_date.gte.${startDate}`)
+          .order("start_date", { ascending: true })
+      ]);
 
-    return {
-      shifts: shiftsResponse.data as Shift[],
-      nonAccountingDays: nonAccountingResponse.data as NonAccountingDay[]
-    };
+      console.log('Resposta shifts:', shiftsResponse);
+      console.log('Resposta non_accounting_days:', nonAccountingResponse);
+
+      if (shiftsResponse.error) throw shiftsResponse.error;
+      if (nonAccountingResponse.error) throw nonAccountingResponse.error;
+
+      return {
+        shifts: shiftsResponse.data as Shift[],
+        nonAccountingDays: nonAccountingResponse.data as NonAccountingDay[]
+      };
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      throw error;
+    }
   };
 
   const { data, error, isLoading } = useQuery({
