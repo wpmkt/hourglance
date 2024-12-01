@@ -10,6 +10,7 @@ import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
+import { Plus } from "lucide-react";
 
 type Shift = Database["public"]["Tables"]["shifts"]["Row"];
 type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
@@ -154,25 +155,36 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      <MonthNavigation currentDate={currentDate} onNavigate={handleNavigate} />
-
-      <MonthlySummary
-        daysInMonth={endOfMonth(currentDate).getDate()}
-        nonAccountingDays={safeData.nonAccountingDays.length}
-        workingDays={calculateWorkingDays()}
-        expectedHours={calculateExpectedHours()}
-        workedHours={calculateWorkedHours()}
-      />
-
-      <div className="flex flex-col sm:flex-row gap-4">
-        <ShiftDialog currentDate={currentDate} />
-        <NonAccountingDayDialog currentDate={currentDate} />
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white">
+        <div className="max-w-lg mx-auto px-4 py-3">
+          <MonthNavigation currentDate={currentDate} onNavigate={handleNavigate} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
-        <ShiftsList shifts={safeData.shifts} />
+      <div className="max-w-lg mx-auto px-4 -mt-4">
+        <MonthlySummary
+          daysInMonth={endOfMonth(currentDate).getDate()}
+          nonAccountingDays={safeData.nonAccountingDays.length}
+          workingDays={calculateWorkingDays()}
+          expectedHours={calculateExpectedHours()}
+          workedHours={calculateWorkedHours()}
+        />
+
+        <div className="mb-24">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Registros Recentes</h2>
+          </div>
+          <div className="space-y-4">
+            <ShiftsList shifts={safeData.shifts} />
+            <NonAccountingDaysList nonAccountingDays={safeData.nonAccountingDays} />
+          </div>
+        </div>
+
+        <div className="fixed bottom-6 left-0 right-0 px-4 max-w-lg mx-auto flex gap-2">
+          <ShiftDialog currentDate={currentDate} />
+          <NonAccountingDayDialog currentDate={currentDate} />
+        </div>
       </div>
     </div>
   );
