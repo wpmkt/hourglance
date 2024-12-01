@@ -2,6 +2,8 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Plus } from "lucide-react";
+import { ShiftDialog } from "@/components/ShiftDialog";
+import { NonAccountingDayDialog } from "@/components/NonAccountingDayDialog";
 
 const Month = () => {
   const calculateWorkingDays = () => {
@@ -69,14 +71,8 @@ const Month = () => {
 
       {/* Action Buttons */}
       <div className="flex gap-4">
-        <Button>
-          <Plus className="w-4 h-4" />
-          Lançar Turno
-        </Button>
-        <Button variant="outline">
-          <Plus className="w-4 h-4" />
-          Lançar Dia Não Contábil
-        </Button>
+        <ShiftDialog />
+        <NonAccountingDayDialog />
       </div>
 
       {/* Records Display */}
