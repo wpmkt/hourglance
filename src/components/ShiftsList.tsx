@@ -1,11 +1,22 @@
 import { format, parseISO } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock, Trash2 } from "lucide-react";
+import { Clock, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Shift {
   id: string;
@@ -17,9 +28,10 @@ interface Shift {
 
 interface ShiftsListProps {
   shifts: Shift[];
+  onEdit?: (shift: Shift) => void;
 }
 
-const ShiftsList = ({ shifts }: ShiftsListProps) => {
+const ShiftsList = ({ shifts, onEdit }: ShiftsListProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -85,14 +97,46 @@ const ShiftsList = ({ shifts }: ShiftsListProps) => {
                     {calculateHours(shift.start_time, shift.end_time).toFixed(1)}h
                   </p>
                   <p className="text-sm text-neutral-600">trabalhadas</p>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                    onClick={() => handleDelete(shift.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-2">
+                    {onEdit && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                        onClick={() => onEdit(shift)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Tem certeza que deseja excluir este turno? Esta ação não pode ser desfeita.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => handleDelete(shift.id)}
+                            className="bg-red-500 hover:bg-red-600"
+                          >
+                            Excluir
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
               </div>
             </div>
