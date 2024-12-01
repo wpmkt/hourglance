@@ -49,10 +49,10 @@ const ShiftsList = ({ shifts }: ShiftsListProps) => {
   };
 
   return (
-    <Card className="bg-white/10 border-none">
-      <div className="p-4 border-b border-white/10 flex items-center gap-2">
-        <Clock className="h-5 w-5 text-white" />
-        <h3 className="text-lg font-medium text-white">Turnos Registrados</h3>
+    <Card className="bg-white">
+      <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
+        <Clock className="h-5 w-5 text-[#8B5CF6]" />
+        <h3 className="text-lg font-medium text-gray-900">Turnos Registrados</h3>
       </div>
       <ScrollArea className="h-[400px]">
         <div className="p-4 space-y-3">
@@ -66,7 +66,7 @@ const ShiftsList = ({ shifts }: ShiftsListProps) => {
             />
           ))}
           {(!shifts || shifts.length === 0) && (
-            <div className="flex flex-col items-center justify-center py-8 text-white/60">
+            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
               <Clock className="h-8 w-8 mb-2 opacity-50" />
               <p className="text-center">
                 Nenhum turno registrado

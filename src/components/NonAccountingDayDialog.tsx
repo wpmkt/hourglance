@@ -74,12 +74,12 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex-1 bg-white text-blue-600 border-blue-600 py-4 rounded-2xl font-medium hover:bg-blue-50 transition-colors">
+        <Button variant="outline" className="flex-1 bg-white text-[#8B5CF6] border-[#8B5CF6] py-4 rounded-2xl font-medium hover:bg-[#8B5CF6] hover:text-white transition-colors">
           <Plus className="w-4 h-4 mr-2" />
           Não Contábil
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-white p-6 rounded-2xl border-0 shadow-xl">
+      <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mb-6">
             <DialogTitle className="text-2xl font-semibold text-gray-900">Lançar Dia Não Contábil</DialogTitle>
@@ -95,7 +95,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               <Input
                 id="startDate"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
@@ -108,7 +108,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               <Input
                 id="endDate"
                 type="date"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
@@ -120,7 +120,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
               </Label>
               <Input
                 id="reason"
-                className="col-span-3 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                className="col-span-3 rounded-xl border-gray-200 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
                 placeholder="Ex: Férias, Licença"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -132,7 +132,7 @@ export function NonAccountingDayDialog({ currentDate = new Date() }: NonAccounti
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3"
+              className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl py-3"
             >
               {loading ? "Salvando..." : "Salvar"}
             </Button>

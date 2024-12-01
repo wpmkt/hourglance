@@ -80,7 +80,7 @@ export function ShiftDialog({ currentDate = new Date() }: ShiftDialogProps) {
           Turno
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-white p-6 rounded-2xl border-none shadow-xl">
+      <DialogContent className="sm:max-w-[425px] mx-4 bg-white p-6 rounded-2xl border-none shadow-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="mb-6">
             <DialogTitle className="text-2xl font-semibold text-gray-900">Lançar Turno</DialogTitle>

@@ -63,22 +63,22 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
   };
 
   return (
-    <Card className="h-[400px] flex flex-col">
+    <Card className="h-[400px] flex flex-col bg-white">
       <div className="p-4 border-b border-neutral-200 flex items-center gap-2">
-        <Calendar className="h-5 w-5 text-neutral-500" />
-        <h3 className="text-lg font-medium">Dias Não Contábeis</h3>
+        <Calendar className="h-5 w-5 text-[#8B5CF6]" />
+        <h3 className="text-lg font-medium text-gray-900">Dias Não Contábeis</h3>
       </div>
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-3">
           {nonAccountingDays?.map((day) => (
             <div 
               key={day.id} 
-              className="p-4 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
+              className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-medium text-neutral-900">{day.reason}</p>
-                  <p className="text-sm text-neutral-600">
+                  <p className="font-medium text-gray-900">{day.reason}</p>
+                  <p className="text-sm text-gray-600">
                     {format(parseISO(day.start_date), "dd/MM/yyyy")} -{" "}
                     {format(parseISO(day.end_date), "dd/MM/yyyy")}
                   </p>
@@ -127,7 +127,7 @@ const NonAccountingDaysList = ({ nonAccountingDays, onEdit }: NonAccountingDaysL
             </div>
           ))}
           {(!nonAccountingDays || nonAccountingDays.length === 0) && (
-            <div className="flex flex-col items-center justify-center py-8 text-neutral-500">
+            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
               <Calendar className="h-8 w-8 mb-2 opacity-50" />
               <p className="text-center">
                 Nenhum dia não contábil registrado
