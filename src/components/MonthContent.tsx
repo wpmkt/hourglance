@@ -9,6 +9,10 @@ import ShiftsList from "@/components/ShiftsList";
 import NonAccountingDaysList from "@/components/NonAccountingDaysList";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import type { Database } from "@/integrations/supabase/types";
+
+type Shift = Database["public"]["Tables"]["shifts"]["Row"];
+type NonAccountingDay = Database["public"]["Tables"]["non_accounting_days"]["Row"];
 
 interface MonthContentProps {
   currentDate: Date;
@@ -46,8 +50,8 @@ const MonthContent = ({ currentDate, userId }: MonthContentProps) => {
     if (nonAccountingResponse.error) throw nonAccountingResponse.error;
 
     return {
-      shifts: shiftsResponse.data || [],
-      nonAccountingDays: nonAccountingResponse.data || []
+      shifts: shiftsResponse.data as Shift[],
+      nonAccountingDays: nonAccountingResponse.data as NonAccountingDay[]
     };
   };
 

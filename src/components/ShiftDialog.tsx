@@ -15,6 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import type { Database } from "@/integrations/supabase/types";
+
+type ShiftInsert = Database["public"]["Tables"]["shifts"]["Insert"];
 
 export function ShiftDialog() {
   const [open, setOpen] = useState(false);
@@ -34,13 +37,17 @@ export function ShiftDialog() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const { error } = await supabase.from("shifts").insert({
+      const newShift: ShiftInsert = {
         date,
         start_time: startTime,
         end_time: endTime,
         comment: comment || null,
         user_id: user.id
-      });
+      };
+
+      const { error } = await supabase
+        .from("shifts")
+        .insert(newShift);
 
       if (error) throw error;
 

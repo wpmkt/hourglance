@@ -15,6 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import type { Database } from "@/integrations/supabase/types";
+
+type NonAccountingDayInsert = Database["public"]["Tables"]["non_accounting_days"]["Insert"];
 
 export function NonAccountingDayDialog() {
   const [open, setOpen] = useState(false);
@@ -33,12 +36,16 @@ export function NonAccountingDayDialog() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const { error } = await supabase.from("non_accounting_days").insert({
+      const newNonAccountingDay: NonAccountingDayInsert = {
         start_date: startDate,
         end_date: endDate,
         reason,
         user_id: user.id
-      });
+      };
+
+      const { error } = await supabase
+        .from("non_accounting_days")
+        .insert(newNonAccountingDay);
 
       if (error) throw error;
 
@@ -126,4 +133,4 @@ export function NonAccountingDayDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+};
